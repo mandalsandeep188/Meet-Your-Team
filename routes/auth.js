@@ -9,7 +9,7 @@ const { JWT_SECRET } = require("../config/keys");
 const User = mongoose.model("User");
 
 // Router from express
-const router = express.router();
+const router = express.Router();
 
 // Register post request
 router.post("/register", (req, res) => {
@@ -41,7 +41,15 @@ router.post("/register", (req, res) => {
   // Registering new user
   user
     .save()
-    .then((user) => res.json({ message: "Registered successfully" }))
+    .then((registeredUser) => {
+      const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
+      const { _id, name, email, profileImage } = registeredUser;
+      res.json({
+        message: "Registered successfully",
+        token,
+        user: { _id, name, email, profileImage },
+      });
+    })
     .catch((err) => console.log(err));
 });
 
@@ -57,7 +65,6 @@ router.post("/login", (req, res) => {
 
   // Authenticating User from database
   User.findOne({ email: email })
-    .populate({ select: "-password" })
     .then((registeredUser) => {
       // If user is not registered with the given email
       if (!registeredUser) {
@@ -71,6 +78,7 @@ router.post("/login", (req, res) => {
         const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
         const { _id, name, email, profileImage } = registeredUser;
         res.json({
+          message: "Logged in successfully",
           token,
           user: { _id, name, email, profileImage },
         });

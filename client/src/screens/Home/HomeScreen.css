@@ -1,0 +1,7 @@
+.welcome {
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/opacity/see-through */
+  color: white;
+  padding: 5%;
+  margin-left: 5%;
+  margin-top: 5%;
+}

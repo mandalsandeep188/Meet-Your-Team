@@ -1,10 +1,17 @@
+import { BrowserRouter } from "react-router-dom";
 import "./App.css";
+import Routing from "./components/Routing";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">Hello World</header>
-    </div>
+    <>
+      <div className="bg"></div>
+      <div className="App">
+        <BrowserRouter>
+          <Routing />
+        </BrowserRouter>
+      </div>
+    </>
   );
 }
 
