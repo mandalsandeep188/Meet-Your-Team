@@ -1,5 +1,6 @@
 import React from "react";
 import "./HomeScreen.css";
+import { Link } from "react-router-dom";
 
 export default function HomeScreen() {
   return (
@@ -11,9 +12,13 @@ export default function HomeScreen() {
             Reach your team across the world to interact with them in a easy and
             effective way.
           </p>
-          <button className="btn" style={{ marginTop: "10px" }}>
+          <Link
+            to="/startMeeting"
+            className="btn"
+            style={{ marginTop: "10px" }}
+          >
             Start Meeting
-          </button>
+          </Link>
         </div>
       </div>
     </div>

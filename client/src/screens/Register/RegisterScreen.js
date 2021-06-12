@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import { loginUser } from "../../redux/actions/index";
 import M from "materialize-css";
@@ -12,7 +12,6 @@ export default function RegisterScreen() {
   const [profileImge, setProfileImge] = useState(undefined);
   const dispatch = useDispatch();
   const history = useHistory();
-  // const user = useSelector((state) => state.userReducer.user);
 
   const register = (e) => {
     e.preventDefault();

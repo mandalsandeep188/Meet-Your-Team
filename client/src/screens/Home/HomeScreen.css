@@ -1,7 +1,14 @@
 .welcome {
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/opacity/see-through */
+  background-color: rgba(0, 0, 0, 0.8); /* Black w/opacity/see-through */
   color: white;
   padding: 5%;
   margin-left: 5%;
-  margin-top: 5%;
+  margin-top: 13%;
+  border-radius: 10px 0 0 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .welcome {
+    margin-top: 25%;
+  }
 }

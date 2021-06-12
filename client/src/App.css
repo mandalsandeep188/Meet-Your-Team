@@ -20,8 +20,8 @@
   left: 0;
 
   /* Add the blur effect */
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+  /* filter: blur(8px);
+  -webkit-filter: blur(8px); */
 }
 
 .App {
@@ -32,12 +32,14 @@
 .background {
   background-color: white;
   padding: 2rem;
-  margin-top: 3rem;
+  margin-top: 20%;
   margin-bottom: 5%;
+  border-radius: 10px;
 }
 
 @media screen and (min-width: 992px) {
   .background {
     width: 50%;
+    margin-top: 10%;
   }
 }

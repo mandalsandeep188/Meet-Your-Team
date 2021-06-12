@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import { loginUser } from "../../redux/actions/index";
 import M from "materialize-css";
