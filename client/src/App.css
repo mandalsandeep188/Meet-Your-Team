@@ -1,10 +1,16 @@
+/* // mobile .background not working*/
+
 .bg {
   /* Seeting background image */
-  background: url(./assets/meeting.jpg) no-repeat center center fixed;
+  background: url(./assets/meeting.jpg) rgb(245, 206, 245) no-repeat center
+    center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  -moz-appearace: none;
+  -webkit-appearace: none;
+  appearance: none;
 
   /* Set rules to fill background */
   min-height: 100%;
@@ -20,14 +26,16 @@
   left: 0;
 
   /* Add the blur effect */
-  /* filter: blur(8px);
-  -webkit-filter: blur(8px); */
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
 }
 
 .App {
   position: relative;
   z-index: 2;
 }
+
+/* auth background */
 
 .background {
   background-color: white;

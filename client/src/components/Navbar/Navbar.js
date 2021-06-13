@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../../redux/actions/index";
+import { logoutUser } from "../../redux/actions/userActions";
 import "./Navbar.css";
 import M from "materialize-css";
 
@@ -21,10 +21,10 @@ export default function Navbar() {
   return (
     <nav style={{ boxShadow: "none" }} className="transparent">
       <div className="nav-wrapper">
-        <Link to="/" className="brand-logo logo center">
+        <Link to="/" className="brand-logo center">
           <img
             src={"logo.png"}
-            className="responsive-img"
+            className="responsive-img logo"
             alt="Meet Your Team"
           />
         </Link>

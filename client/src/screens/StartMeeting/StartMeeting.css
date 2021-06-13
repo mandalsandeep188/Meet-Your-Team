@@ -1,5 +1,66 @@
 .start-meeting {
-  width: 80%;
+  width: 90%;
   margin: auto;
-  margin-top: 10%;
+  margin-top: 8%;
+}
+
+#preview {
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .start-meeting {
+    margin-top: 22%;
+  }
+}
+
+.video {
+  position: relative;
+  width: 100%;
+  background-color: black;
+  border-radius: 10px;
+  height: 439px;
+}
+
+.video > video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
+}
+
+#videocam {
+  position: absolute;
+  left: 33%;
+  bottom: 5%;
+}
+#mic {
+  position: absolute;
+  left: 55%;
+  bottom: 5%;
+}
+
+.tabs {
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.tabs a {
+  color: teal !important;
+}
+
+.tabs .indicator {
+  height: 4px !important;
+  background-color: teal !important;
+}
+
+.meet-option {
+  background-color: white;
+  padding: 40px !important;
+  text-align: center;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  margin-top: 10px;
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
-import { loginUser } from "../../redux/actions/index";
+import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
 
