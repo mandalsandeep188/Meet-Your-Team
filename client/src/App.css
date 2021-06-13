@@ -2,7 +2,7 @@
 
 .bg {
   /* Seeting background image */
-  background: url(./assets/meeting.jpg) rgb(245, 206, 245) no-repeat center
+  background: url(./assets/meeting.jpg) rgb(141, 38, 182) no-repeat center
     center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
