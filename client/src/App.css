@@ -1,5 +1,9 @@
 /* // mobile .background not working*/
 
+* {
+  scroll-behavior: smooth;
+}
+
 .bg {
   /* Seeting background image */
   background: url(./assets/meeting.jpg) rgb(141, 38, 182) no-repeat center

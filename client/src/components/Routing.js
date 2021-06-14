@@ -21,14 +21,7 @@ export default function Routing() {
         <RegisterScreen />
       </Route>
       <Route path="/startMeeting">
-        {user ? (
-          <>
-            <Navbar />
-            <StartMeetingScreen />
-          </>
-        ) : (
-          <Redirect to="/login" />
-        )}
+        <StartMeetingScreen />
       </Route>
       <Route path="/">
         <Navbar />

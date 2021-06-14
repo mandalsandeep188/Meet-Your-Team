@@ -20,6 +20,7 @@ app.use(express.json());
 
 // Routes
 app.use(require("./routes/auth"));
+app.use(require("./routes/meet"));
 
 // Production setup
 

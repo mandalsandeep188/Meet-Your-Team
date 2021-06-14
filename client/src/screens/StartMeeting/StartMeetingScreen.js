@@ -5,17 +5,28 @@ import M from "materialize-css";
 import InputField from "../../components/InputField";
 
 export default function StartMeetingScreen() {
-  const preview = useRef();
   const [stream, setStream] = useState(null);
-  const history = useHistory();
-
   const [videoStatus, setVideoStatus] = useState("videocam");
   const [audioStatus, setAudioStatus] = useState("mic");
+  const preview = useRef();
+  const history = useHistory();
 
   useEffect(() => {
-    // getting video stream
-    startStream(true, true);
     M.AutoInit();
+    fetch("/startMeeting", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          M.toast({ html: data.error, classes: "#c62828 red darken-3" });
+          history.replace("/login");
+        } else {
+          startStream(true, true);
+        }
+      });
   }, []);
 
   const startStream = (video, audio) => {
@@ -43,13 +54,15 @@ export default function StartMeetingScreen() {
   const toggleVideo = () => {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
-      stream.getTracks().forEach((track) => {
-        if (track.kind === "video" && track.readyState === "live") {
-          track.stop();
-        }
-      });
+      stream.getVideoTracks()[0].enabled = false;
+      // stream.getTracks().forEach((track) => {
+      //   if (track.kind === "video" && track.readyState === "live") {
+      //     track.stop();
+      //   }
+      // });
     } else {
-      startStream(true, audioStatus === "mic");
+      // startStream(true, audioStatus === "mic");
+      stream.getVideoTracks()[0].enabled = true;
       setVideoStatus("videocam");
     }
   };
@@ -57,13 +70,9 @@ export default function StartMeetingScreen() {
   const toggleAudio = () => {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
-      stream.getTracks().forEach((track) => {
-        if (track.kind === "audio" && track.readyState === "live") {
-          track.stop();
-        }
-      });
+      stream.getAudioTracks()[0].enabled = false;
     } else {
-      startStream(videoStatus === "videocam", true);
+      stream.getAudioTracks()[0].enabled = true;
       setAudioStatus("mic");
     }
   };
@@ -82,7 +91,7 @@ export default function StartMeetingScreen() {
         <div className="col m6 s12">
           <div className="video">
             <video
-              className="responsive-video"
+              className="responsive-video z-depth-2"
               ref={preview}
               muted={true}
               id="preview"
@@ -104,25 +113,25 @@ export default function StartMeetingScreen() {
           </div>
         </div>
         <div className="col m6 s12">
-          <div class="row">
-            <div class="col s12">
-              <ul class="tabs">
-                <li class="tab col s6">
+          <div className="row">
+            <div className="col s12">
+              <ul className="tabs">
+                <li className="tab col s6">
                   <Link className="active" to="#newMeet">
                     New Meeting
                   </Link>
                 </li>
-                <li class="tab col s6">
-                  <Link class="" to="#joinMeet">
+                <li className="tab col s6">
+                  <Link className="" to="#joinMeet">
                     Join Meeting
                   </Link>
                 </li>
               </ul>
-              <div id="newMeet" class="col s12 meet-option">
+              <div id="newMeet" className="col s12 meet-option">
                 <h4>Host a new meeting</h4>
                 <button className="btn">Start New Meeting</button>
               </div>
-              <div id="joinMeet" class="col s12 meet-option">
+              <div id="joinMeet" className="col s12 meet-option">
                 <h4>Join a meeting</h4>
                 <InputField type="text" label="Meeting Link" />
                 <button className="btn">Join Meeting</button>
