@@ -25,8 +25,6 @@ app.use(require("./routes/meet"));
 // Production setup
 
 if (process.env.NODE_ENV == "production") {
-  app.use(express.static("client/build"));
-
   // Redirect all traffic to https
   app.all("*", function (req, res, next) {
     console.log(
@@ -43,6 +41,8 @@ if (process.env.NODE_ENV == "production") {
       "https://" + req.hostname + ":" + app.get("secPort") + req.url
     );
   });
+
+  app.use(express.static("client/build"));
 
   const path = require("path");
   app.get("*", (req, res) => {
