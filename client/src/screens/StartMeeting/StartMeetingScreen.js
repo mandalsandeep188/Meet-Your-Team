@@ -99,8 +99,8 @@ export default function StartMeetingScreen() {
     dispatch(setStreamState(streamState));
     socket.emit("newMeeting");
     socket.on("newMeeting", (data) => {
-      history.push(`/${data.meetId}`);
-      M.toast({ html: `Meet link: http://localhost:3000/${data.meetId}` });
+      history.push(`/meet/${data.meetId}`);
+      M.toast({ html: `Meet link: http://localhost:3000/meet/${data.meetId}` });
     });
   };
 

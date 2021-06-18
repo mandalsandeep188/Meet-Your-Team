@@ -18,7 +18,7 @@ router.get("/startMeeting", requireLogin, (req, res) => {
   res.json({ user: req.user });
 });
 
-router.get("/:meetId", requireLogin, (req, res) => {
+router.get("/meet/:meetId", requireLogin, (req, res) => {
   // const meet = getMeet(req.params.meetId);
   // if (meetingRooms.has(req.params.meetId))
   res.json({ user: req.user });

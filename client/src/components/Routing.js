@@ -23,7 +23,7 @@ export default function Routing() {
       <Route path="/startMeeting">
         <StartMeetingScreen />
       </Route>
-      <Route path="/:meetId">
+      <Route path="/meet/:meetId">
         <MeetingScreen />
       </Route>
       <Route path="/">

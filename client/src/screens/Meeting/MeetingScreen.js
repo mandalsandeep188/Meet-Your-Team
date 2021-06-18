@@ -26,7 +26,7 @@ export default function MeetingScreen() {
   const grid = useRef();
 
   useEffect(() => {
-    fetch(`/${meetId}`, {
+    fetch(`/meet/${meetId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
