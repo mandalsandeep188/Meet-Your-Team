@@ -101,7 +101,7 @@ export default function StartMeetingScreen() {
     socket.on("newMeeting", (data) => {
       history.push(`/${data.meetId}`);
       M.toast({
-        html: `Meet link: https://meetyourteam.herokuapp.com/${data.meetId}`,
+        html: `Meet link: https://meetyourteam.herokuapp.com/meet/${data.meetId}`,
       });
     });
   };
