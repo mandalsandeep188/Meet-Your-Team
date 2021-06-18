@@ -1,0 +1,38 @@
+.video-grid {
+  margin: 10px 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.video-grid video {
+  border-radius: 10px;
+  width: 60%;
+  margin: 10px;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
+}
+
+.video-controls {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-controls button {
+  margin: 0 20px;
+}
+
+@media screen and (max-width: 992px) {
+  .video-grid {
+    margin: 20px;
+  }
+  .video-grid video {
+    width: 100%;
+  }
+}

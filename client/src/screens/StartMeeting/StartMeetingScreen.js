@@ -1,15 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 import "./StartMeeting.css";
 import { Link, useHistory } from "react-router-dom";
-import M from "materialize-css";
 import InputField from "../../components/InputField";
+import { useDispatch, useSelector } from "react-redux";
+import { setStreamState } from "../../redux/actions/streamActions";
+import M from "materialize-css";
+
+export const socket = io("http://localhost:5000");
 
 export default function StartMeetingScreen() {
   const [stream, setStream] = useState(null);
   const [videoStatus, setVideoStatus] = useState("videocam");
   const [audioStatus, setAudioStatus] = useState("mic");
+  const [joinId, setJoinId] = useState("");
   const preview = useRef();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer);
 
   useEffect(() => {
     M.AutoInit();
@@ -24,20 +32,19 @@ export default function StartMeetingScreen() {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
           history.replace("/login");
         } else {
-          startStream(true, true);
+          startStream();
         }
       });
   }, []);
 
-  const startStream = (video, audio) => {
+  const startStream = () => {
     const myVideo = preview.current;
     navigator.mediaDevices
       .getUserMedia({
-        video,
-        audio,
+        video: true,
+        audio: true,
       })
       .then((stream) => {
-        window.localStream = stream;
         addVideoStream(myVideo, stream);
       });
   };
@@ -50,6 +57,13 @@ export default function StartMeetingScreen() {
       video.play();
     });
   };
+
+  // cleanup think
+  useEffect(() => {
+    return () => {
+      // history.go(0);
+    };
+  }, []);
 
   const toggleVideo = () => {
     if (videoStatus === "videocam") {
@@ -77,13 +91,26 @@ export default function StartMeetingScreen() {
     }
   };
 
-  // cleanup
-  useEffect(() => {
-    return () => {
-      console.log("left start meeting");
-      history.go(0);
+  const newMeeting = () => {
+    const streamState = {
+      videoStatus,
+      audioStatus,
     };
-  }, []);
+    dispatch(setStreamState(streamState));
+    socket.emit("newMeeting");
+    socket.on("newMeeting", (data) => {
+      history.push(`/${data.meetId}`);
+      M.toast({ html: `Meet link: http://localhost:3000/${data.meetId}` });
+    });
+  };
+
+  const joinMeeting = () => {
+    let meetId = joinId;
+    meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
+    console.log(meetId);
+    socket.emit("joinMeeting", { user, meetId });
+    history.push(`/${meetId}`);
+  };
 
   return (
     <div className="start-meeting">
@@ -129,12 +156,20 @@ export default function StartMeetingScreen() {
               </ul>
               <div id="newMeet" className="col s12 meet-option">
                 <h4>Host a new meeting</h4>
-                <button className="btn">Start New Meeting</button>
+                <button className="btn" onClick={newMeeting}>
+                  Start New Meeting
+                </button>
               </div>
               <div id="joinMeet" className="col s12 meet-option">
                 <h4>Join a meeting</h4>
-                <InputField type="text" label="Meeting Link" />
-                <button className="btn">Join Meeting</button>
+                <InputField
+                  type="text"
+                  label="Meeting Link"
+                  changer={setJoinId}
+                />
+                <button className="btn" onClick={joinMeeting}>
+                  Join Meeting
+                </button>
               </div>
             </div>
           </div>

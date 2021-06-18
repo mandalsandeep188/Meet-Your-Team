@@ -5,9 +5,6 @@ export default function streamReducer(state = initialState, action) {
     case "SET_STREAM":
       return action.payload;
 
-    case "STOP_STREAM":
-      return action.payload;
-
     default:
       return state;
   }
