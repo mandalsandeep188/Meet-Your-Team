@@ -109,7 +109,7 @@ export default function StartMeetingScreen() {
     meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
     console.log(meetId);
     socket.emit("joinMeeting", { user, meetId });
-    history.push(`/${meetId}`);
+    history.push(`/meet/${meetId}`);
   };
 
   return (
