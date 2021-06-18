@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
 
-export const socket = io("http://localhost:5000");
+export const socket = io("https://meetyourteam.herokuapp.com/");
 
 export default function StartMeetingScreen() {
   const [stream, setStream] = useState(null);
@@ -100,7 +100,9 @@ export default function StartMeetingScreen() {
     socket.emit("newMeeting");
     socket.on("newMeeting", (data) => {
       history.push(`/${data.meetId}`);
-      M.toast({ html: `Meet link: http://localhost:3000/${data.meetId}` });
+      M.toast({
+        html: `Meet link: https://meetyourteam.herokuapp.com/${data.meetId}`,
+      });
     });
   };
 
