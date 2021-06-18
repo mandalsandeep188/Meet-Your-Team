@@ -42,9 +42,9 @@ export default function LoginScreen() {
 
   return (
     <div className="container background">
-      <div class="row">
+      <div className="row">
         <h4 className="center-align">Login to Meet Your Team</h4>
-        <form class="col s12" onSubmit={(e) => login(e)}>
+        <form className="col s12" onSubmit={(e) => login(e)}>
           <div className="row">
             <InputField type={"email"} label={"Email"} changer={setEmail} />
             <InputField

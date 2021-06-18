@@ -6,9 +6,9 @@ import HomeScreen from "../screens/Home/HomeScreen";
 import RegisterScreen from "../screens/Register/RegisterScreen";
 import { useSelector } from "react-redux";
 import StartMeetingScreen from "../screens/StartMeeting/StartMeetingScreen";
+import MeetingScreen from "../screens/Meeting/MeetingScreen";
 
 export default function Routing() {
-  // direct startMeeting problem
   const user = useSelector((state) => state.userReducer);
   return (
     <Switch>
@@ -22,6 +22,9 @@ export default function Routing() {
       </Route>
       <Route path="/startMeeting">
         <StartMeetingScreen />
+      </Route>
+      <Route path="/:meetId">
+        <MeetingScreen />
       </Route>
       <Route path="/">
         <Navbar />

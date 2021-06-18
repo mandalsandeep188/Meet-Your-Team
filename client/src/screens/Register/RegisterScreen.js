@@ -46,9 +46,9 @@ export default function RegisterScreen() {
 
   return (
     <div className="container background">
-      <div class="row">
+      <div className="row">
         <h4 className="center-align">Register with Meet Your Team</h4>
-        <form class="col s12" onSubmit={(e) => register(e)}>
+        <form className="col s12" onSubmit={(e) => register(e)}>
           <div className="row">
             <InputField type={"text"} label={"Name"} changer={setName} />
             <InputField type={"email"} label={"Email"} changer={setEmail} />
