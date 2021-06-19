@@ -22,9 +22,11 @@ module.exports = (req, res, next) => {
 
     const { _id } = payload;
     // If user is authenticated successfully get user data
-    User.findById(_id).then((userdata) => {
-      req.user = userdata;
-      next();
-    });
+    User.findById(_id)
+      .select("-password")
+      .then((userdata) => {
+        req.user = userdata;
+        next();
+      });
   });
 };

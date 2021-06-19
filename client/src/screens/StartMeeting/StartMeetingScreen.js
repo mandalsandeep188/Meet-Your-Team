@@ -100,15 +100,24 @@ export default function StartMeetingScreen() {
     socket.emit("newMeeting");
     socket.on("newMeeting", (data) => {
       history.push(`/meet/${data.meetId}`);
+<<<<<<< HEAD
       M.toast({
         html: `Meet link: https://meetyourteam.herokuapp.com/meet/${data.meetId}`,
       });
+=======
+      M.toast({ html: `Meet link: http://localhost:3000/meet/${data.meetId}` });
+>>>>>>> dev
     });
   };
 
   const joinMeeting = () => {
     let meetId = joinId;
     meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
+    const streamState = {
+      videoStatus,
+      audioStatus,
+    };
+    dispatch(setStreamState(streamState));
     console.log(meetId);
     socket.emit("joinMeeting", { user, meetId });
     history.push(`/meet/${meetId}`);
