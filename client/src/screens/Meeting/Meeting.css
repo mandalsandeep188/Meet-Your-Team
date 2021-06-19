@@ -7,7 +7,7 @@
 
 .video-grid video {
   border-radius: 10px;
-  width: 60%;
+  width: 45%;
   margin: 10px;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */

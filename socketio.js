@@ -18,15 +18,14 @@ const newMeeting = (client) => {
 // Join meeting with meetId
 const joinMeeting = (client, userId, meetId, user) => {
   // const meet = getMeet(meetId);
-  // if (meetingRooms.has(makeId)) {
-  console.log("join meeting", userId, user.name);
-  meetingRooms[client.id] = meetId;
-  client.join(meetId);
-  if (userId) client.broadcast.to(meetId).emit("user-connected", userId, user);
-  // }
-  // else {
-  //   client.emit("joinMeeting", { error: "Invalid meeting link" });
-  // }
+  if (meetingRooms.has(meetId)) {
+    console.log("join meeting", userId, user.name);
+    client.join(meetId);
+    if (userId)
+      client.broadcast.to(meetId).emit("user-connected", { userId, user });
+  } else {
+    client.emit("user-connected", { error: "Invalid meeting link" });
+  }
 };
 
 module.exports = { newMeeting, joinMeeting, meetingRooms };
