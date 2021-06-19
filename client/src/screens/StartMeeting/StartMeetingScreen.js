@@ -107,6 +107,11 @@ export default function StartMeetingScreen() {
   const joinMeeting = () => {
     let meetId = joinId;
     meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
+    const streamState = {
+      videoStatus,
+      audioStatus,
+    };
+    dispatch(setStreamState(streamState));
     console.log(meetId);
     socket.emit("joinMeeting", { user, meetId });
     history.push(`/meet/${meetId}`);
