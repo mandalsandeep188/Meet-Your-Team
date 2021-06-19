@@ -11,6 +11,7 @@ export default function MeetingScreen() {
   const user = useSelector((state) => state.userReducer);
   const { meetId } = useParams();
   const [stream, setStream] = useState(null);
+  const [sendingStream, setSendingStream] = useState(null);
   const [peer, setPeer] = useState();
   const [videoStatus, setVideoStatus] = useState(
     streamState ? streamState.videoStatus : "videocam"
@@ -43,7 +44,7 @@ export default function MeetingScreen() {
 
     // peer disconnect on leave
     return () => {
-      if (peer) peer.diconnect();
+      history.go(0);
     };
   }, []);
 
@@ -112,13 +113,15 @@ export default function MeetingScreen() {
 
   // call new user
   const callUser = (userId) => {
-    // call user
     navigator.mediaDevices
       .getUserMedia({
         video: true,
         audio: true,
       })
       .then((stream) => {
+        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
+        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
+        setSendingStream(stream);
         console.log("calling...", userId);
         const call = peer.call(userId, stream);
         const video = document.createElement("video");
@@ -141,6 +144,9 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
+        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
+        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
+        setSendingStream(stream);
         console.log("Answering call...");
         call.answer(stream);
         const video = document.createElement("video");
@@ -166,8 +172,10 @@ export default function MeetingScreen() {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
       stream.getVideoTracks()[0].enabled = false;
+      sendingStream.getVideoTracks()[0].enabled = false;
     } else {
       stream.getVideoTracks()[0].enabled = true;
+      sendingStream.getVideoTracks()[0].enabled = true;
       setVideoStatus("videocam");
     }
   };
@@ -176,8 +184,10 @@ export default function MeetingScreen() {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
       stream.getAudioTracks()[0].enabled = false;
+      sendingStream.getAudioTracks()[0].enabled = false;
     } else {
       stream.getAudioTracks()[0].enabled = true;
+      sendingStream.getAudioTracks()[0].enabled = true;
       setAudioStatus("mic");
     }
   };
