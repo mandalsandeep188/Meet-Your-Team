@@ -11,6 +11,7 @@ export default function MeetingScreen() {
   const user = useSelector((state) => state.userReducer);
   const { meetId } = useParams();
   const [stream, setStream] = useState(null);
+  const [sendingStream, setSendingStream] = useState(null);
   const [peer, setPeer] = useState();
   const [videoStatus, setVideoStatus] = useState(
     streamState ? streamState.videoStatus : "videocam"
@@ -25,6 +26,7 @@ export default function MeetingScreen() {
   const grid = useRef();
 
   useEffect(() => {
+    // Authenticate user
     fetch(`/meet/${meetId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -40,12 +42,14 @@ export default function MeetingScreen() {
         }
       });
 
+    // peer disconnect on leave
     return () => {
-      if (peer) peer.diconnect();
+      history.go(0);
     };
   }, []);
 
   useEffect(() => {
+    // Set peer by user id
     if (!peer && user) {
       setPeer(
         new Peer(user._id, {
@@ -56,7 +60,9 @@ export default function MeetingScreen() {
       );
     }
 
+    // Events
     if (peer) {
+      // peer open event
       peer.on("open", (id) => {
         console.log("hello", id);
         socket.emit("joinMeeting", { id, meetId, user });
@@ -92,8 +98,6 @@ export default function MeetingScreen() {
   const startStream = () => {
     const video = document.createElement("video");
     video.muted = true;
-    video.classList.add(["responsive-video", "z-depth-2"]);
-
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -107,20 +111,20 @@ export default function MeetingScreen() {
       });
   };
 
-  // connect to new user
+  // call new user
   const callUser = (userId) => {
-    // call user
     navigator.mediaDevices
       .getUserMedia({
         video: true,
         audio: true,
       })
       .then((stream) => {
-        setStream(stream);
+        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
+        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
+        setSendingStream(stream);
         console.log("calling...", userId);
         const call = peer.call(userId, stream);
         const video = document.createElement("video");
-        video.classList.add(["responsive-video", "z-depth-2"]);
         call.on("stream", (userVideoStream) => {
           console.log("Getting reciever stream...");
           addVideoStream(video, userVideoStream);
@@ -140,10 +144,12 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
+        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
+        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
+        setSendingStream(stream);
         console.log("Answering call...");
         call.answer(stream);
         const video = document.createElement("video");
-        video.classList.add(["responsive-video", "z-depth-2"]);
         call.on("stream", (userVideoStream) => {
           console.log("Getting caller's stream....");
           addVideoStream(video, userVideoStream);
@@ -153,6 +159,7 @@ export default function MeetingScreen() {
 
   // add video stream to UI
   const addVideoStream = (video, stream) => {
+    video.classList.add(["responsive-video", "z-depth-2"]);
     video.srcObject = stream;
     video.addEventListener("loadedmetadata", () => {
       video.play();
@@ -165,14 +172,10 @@ export default function MeetingScreen() {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
       stream.getVideoTracks()[0].enabled = false;
-      // stream.getTracks().forEach((track) => {
-      //   if (track.kind === "video" && track.readyState === "live") {
-      //     track.stop();
-      //   }
-      // });
+      sendingStream.getVideoTracks()[0].enabled = false;
     } else {
-      // startStream(true, audioStatus === "mic");
       stream.getVideoTracks()[0].enabled = true;
+      sendingStream.getVideoTracks()[0].enabled = true;
       setVideoStatus("videocam");
     }
   };
@@ -181,8 +184,10 @@ export default function MeetingScreen() {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
       stream.getAudioTracks()[0].enabled = false;
+      sendingStream.getAudioTracks()[0].enabled = false;
     } else {
       stream.getAudioTracks()[0].enabled = true;
+      sendingStream.getAudioTracks()[0].enabled = true;
       setAudioStatus("mic");
     }
   };

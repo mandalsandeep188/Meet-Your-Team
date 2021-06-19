@@ -18,6 +18,7 @@ export default function StartMeetingScreen() {
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer);
+  const streamState = useSelector((state) => state.streamReducer);
 
   useEffect(() => {
     M.AutoInit();
@@ -61,7 +62,7 @@ export default function StartMeetingScreen() {
   // cleanup think
   useEffect(() => {
     return () => {
-      // history.go(0);
+      // if (!streamState) history.go(0);
     };
   }, []);
 
@@ -69,13 +70,7 @@ export default function StartMeetingScreen() {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
       stream.getVideoTracks()[0].enabled = false;
-      // stream.getTracks().forEach((track) => {
-      //   if (track.kind === "video" && track.readyState === "live") {
-      //     track.stop();
-      //   }
-      // });
     } else {
-      // startStream(true, audioStatus === "mic");
       stream.getVideoTracks()[0].enabled = true;
       setVideoStatus("videocam");
     }
