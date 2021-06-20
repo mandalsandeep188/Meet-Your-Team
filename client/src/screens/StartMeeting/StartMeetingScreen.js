@@ -6,6 +6,7 @@ import InputField from "../../components/InputField";
 import { useDispatch, useSelector } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
+import { loginUser } from "../../redux/actions/userActions";
 
 export const socket = io("https://meetyourteam.herokuapp.com/");
 
@@ -25,6 +26,8 @@ export default function StartMeetingScreen() {
     fetch("/startMeeting", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
+        pragma: "no-cache",
+        "Cache-Control": "no-cache",
       },
     })
       .then((res) => res.json())
@@ -33,6 +36,8 @@ export default function StartMeetingScreen() {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
           history.replace("/login");
         } else {
+          console.log("Athenticated");
+          dispatch(loginUser(user));
           startStream();
         }
       });
