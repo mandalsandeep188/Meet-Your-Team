@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import M from "materialize-css";
 import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
+import { loginUser } from "../../redux/actions/userActions";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
@@ -19,17 +20,20 @@ export default function MeetingScreen() {
   const [audioStatus, setAudioStatus] = useState(
     streamState ? streamState.audioStatus : "mic"
   );
-  const [peers, setPeers] = useState({});
+  const peers = useRef({});
   const [peopleCount, setPeopleCount] = useState(0);
   const count = useRef(0);
   const history = useHistory();
   const grid = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Authenticate user
     fetch(`/meet/${meetId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
+        pragma: "no-cache",
+        "Cache-Control": "no-cache",
       },
     })
       .then((res) => res.json())
@@ -38,6 +42,7 @@ export default function MeetingScreen() {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
           history.replace("/");
         } else {
+          dispatch(loginUser(user));
           startStream();
         }
       });
@@ -50,6 +55,7 @@ export default function MeetingScreen() {
 
   useEffect(() => {
     // Set peer by user id
+    let user = JSON.parse(localStorage.getItem("user"));
     if (!peer && user) {
       setPeer(
         new Peer(user._id, {
@@ -82,15 +88,19 @@ export default function MeetingScreen() {
         } else {
           console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
-          callUser(data.userId);
+          callUser(user._id, data.userId);
         }
       });
 
       socket.on("user-disconnected", (userId, user) => {
-        console.log("socket disconnected", userId);
+        console.log("socket disconnected", user.name);
         if (userId) {
           M.toast({ html: `${user.name} left the meeting` });
-          if (peers[userId]) peers[userId].remove();
+          if (peers.current[userId]) {
+            peers.current[userId].remove();
+            setPeopleCount(count.current - 1);
+            count.current = count.current - 1;
+          }
         }
       });
     }
@@ -114,7 +124,7 @@ export default function MeetingScreen() {
   };
 
   // call new user
-  const callUser = (userId) => {
+  const callUser = (myId, userId) => {
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -125,11 +135,9 @@ export default function MeetingScreen() {
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
         setSendingStream([...sendingStream, stream]);
         console.log("calling...", userId);
-        const call = peer.call(userId, stream, { metadata: { userId } });
+        const call = peer.call(userId, stream, { metadata: { userId: myId } });
         const video = document.createElement("video");
-        const connectedPeers = { ...peers };
-        connectedPeers[userId] = video;
-        setPeers(connectedPeers);
+        peers.current[userId] = video;
         call.on("stream", (userVideoStream) => {
           console.log("Getting reciever stream...");
           addVideoStream(video, userVideoStream);
@@ -155,9 +163,7 @@ export default function MeetingScreen() {
         console.log("Answering call...");
         call.answer(stream);
         const video = document.createElement("video");
-        const connectedPeers = { ...peers };
-        connectedPeers[call.metadata.userId] = video;
-        setPeers(connectedPeers);
+        peers.current[call.metadata.userId] = video;
         call.on("stream", (userVideoStream) => {
           console.log("Getting caller's stream....");
           addVideoStream(video, userVideoStream);
@@ -169,7 +175,6 @@ export default function MeetingScreen() {
   const addVideoStream = (video, stream) => {
     video.classList.add(["responsive-video", "z-depth-3"]);
     if (!video.srcObject) {
-      console.log("changing count");
       setPeopleCount(count.current + 1);
       count.current = count.current + 1;
     }
@@ -212,8 +217,6 @@ export default function MeetingScreen() {
       });
     }
   };
-
-  console.log(peers);
 
   return (
     <>
