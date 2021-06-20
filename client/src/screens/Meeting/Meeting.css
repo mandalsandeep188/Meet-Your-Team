@@ -1,14 +1,17 @@
 .video-grid {
-  margin: 10px 50px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  row-gap: 5px;
+  column-gap: 5px;
+  height: 90vh;
+  background-color: #1b1919;
 }
 
 .video-grid video {
   border-radius: 10px;
-  width: 45%;
-  margin: 10px;
+  max-height: 86vh;
+  width: 90%;
+  margin: auto;
+  object-fit: cover;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
@@ -16,6 +19,7 @@
 
 .video-controls {
   width: 100%;
+  background-color: #1b1919;
   position: fixed;
   bottom: 0;
   padding: 20px;
@@ -29,9 +33,6 @@
 }
 
 @media screen and (max-width: 992px) {
-  .video-grid {
-    margin: 20px;
-  }
   .video-grid video {
     width: 100%;
   }
