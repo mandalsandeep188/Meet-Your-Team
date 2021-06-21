@@ -14,7 +14,7 @@ const getMeet = require("../utils/getMeet");
 
 const { meetingRooms } = require("../socketio");
 
-router.get("/startmeeting", requireLogin, (req, res) => {
+router.get("/startmeet", requireLogin, (req, res) => {
   res.json({ user: req.user });
 });
 
