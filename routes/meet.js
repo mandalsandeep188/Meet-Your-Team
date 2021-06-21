@@ -14,11 +14,11 @@ const getMeet = require("../utils/getMeet");
 
 const { meetingRooms } = require("../socketio");
 
-router.get("/startMeeting", requireLogin, (req, res) => {
+router.get("/startmeeting", requireLogin, (req, res) => {
   res.json({ user: req.user });
 });
 
-router.get("/meet/:meetId", requireLogin, (req, res) => {
+router.get("/meeting/:meetId", requireLogin, (req, res) => {
   // const meet = getMeet(req.params.meetId);
   if (meetingRooms.has(req.params.meetId)) res.json({ user: req.user });
   else res.json({ error: "Invalid meeting link" });
