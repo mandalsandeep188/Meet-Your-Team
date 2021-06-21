@@ -23,7 +23,7 @@ export default function StartMeetingScreen() {
 
   useEffect(() => {
     M.AutoInit();
-    fetch("/startMeeting", {
+    fetch("/startmeeting", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
         pragma: "no-cache",

@@ -29,7 +29,7 @@ export default function MeetingScreen() {
 
   useEffect(() => {
     // Authenticate user
-    fetch(`/meet/${meetId}`, {
+    fetch(`/meeting/${meetId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
         pragma: "no-cache",
