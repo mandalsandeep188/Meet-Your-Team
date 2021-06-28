@@ -235,9 +235,11 @@ export default function MeetingScreen() {
 
   const toggleSideBar = (toShow) => {
     setSideBar(toShow);
+    window.scrollTo(0, document.body.scrollHeight);
   };
 
   useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
     let objDiv = document.getElementsByClassName("chats")[0];
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
@@ -248,7 +250,7 @@ export default function MeetingScreen() {
         className={`col ${
           sideBar === "close" ? "m12" : "m9"
         } s12 scale-transition`}
-        style={{ margin: "0px", padding: "0px" }}
+        style={{ margin: "0px", padding: "0px", position: "relative" }}
       >
         <Carousel
           autoPlay={false}
@@ -291,19 +293,13 @@ export default function MeetingScreen() {
           </button>
           <button
             className="btn-floating btn"
-            onClick={() => {
-              toggleSideBar("users");
-              window.scrollTo(0, document.body.scrollHeight);
-            }}
+            onClick={() => toggleSideBar("users")}
           >
             <i className="material-icons">people</i>
           </button>
           <button
             className="btn-floating btn"
-            onClick={() => {
-              toggleSideBar("chats");
-              window.scrollTo(0, document.body.scrollHeight);
-            }}
+            onClick={() => toggleSideBar("chats")}
           >
             <i className="material-icons">chat</i>
           </button>

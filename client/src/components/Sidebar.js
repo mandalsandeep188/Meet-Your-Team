@@ -38,7 +38,7 @@ export default function Sidebar(props) {
             {props.toShow === "users" ? "Participants" : "Chats"}
           </h5>
         </div>
-        <div className="col s2">
+        <div className="col s2" style={{ padding: "10px" }}>
           <button
             className="btn-floating btn-small red"
             onClick={() => props.toggler("close")}
