@@ -47,25 +47,38 @@ app.use(peerServer);
 app.use(require("./routes/auth"));
 app.use(require("./routes/meet"));
 
-const { newMeeting, joinMeeting } = require("./socketio");
+const {
+  newMeeting,
+  joinMeeting,
+  meetingUsers,
+  leaveMeeting,
+  sendMessage,
+  receiveMessage,
+} = require("./socketio");
 
 // Socket IO related events
 io.on("connection", (client) => {
-  // console.log("Connected to socket io");
+  // new meeting created event
   client.on("newMeeting", () => newMeeting(client));
+
+  // user joined event
   client.on("joinMeeting", (data) => {
     joinMeeting(client, data.id, data.meetId, data.user);
-
     client.on("disconnect", () => {
-      // console.log("disconnected socket");
-      io.sockets.in(data.meetId).emit("user-disconnected", data.id, data.user);
+      console.log("disconnected socket");
+      leaveMeeting(client, data);
     });
+  });
+
+  // chat event
+  client.on("sendMessage", (data) => {
+    sendMessage(data.msg, data.user, data.meetId, data.time);
   });
 });
 
 // Peer server events
 peerServer.on("connection", (client) => {
-  // console.log("Connected to peer server");
+  console.log("Connected to peer server");
 });
 
 // Production setup

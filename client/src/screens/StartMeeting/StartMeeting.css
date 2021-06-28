@@ -1,7 +1,7 @@
 .start-meeting {
   width: 90%;
   margin: auto;
-  margin-top: 8%;
+  padding-top: 8%;
 }
 
 #preview {
@@ -10,7 +10,7 @@
 
 @media screen and (max-width: 992px) {
   .start-meeting {
-    margin-top: 22%;
+    padding-top: 13%;
   }
 }
 
@@ -29,14 +29,12 @@
   -moz-transform: rotateY(180deg); /* Firefox */
 }
 
-#videocam {
+.video-ctrl {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
   position: absolute;
-  left: 33%;
-  bottom: 5%;
-}
-#mic {
-  position: absolute;
-  left: 55%;
   bottom: 5%;
 }
 
@@ -47,6 +45,11 @@
 
 .tabs a {
   color: teal !important;
+}
+
+tabs .tab a:focus,
+.tabs .tab a:focus.active {
+  background-color: rgb(244, 248, 248) !important;
 }
 
 .tabs .indicator {

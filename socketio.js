@@ -1,15 +1,16 @@
 const { io } = require("./app");
-const getMeet = require("./utils/getMeet");
 const { makeId } = require("./utils/uuid");
 
 const meetingRooms = new Set();
-// const meetingStates = {};
+const meetingUsers = {};
+const meetingChats = {};
 
 // Create new meeting
 const newMeeting = (client) => {
   const meetId = makeId(8);
   meetingRooms.add(meetId);
-  // client.join(meetId);
+  meetingUsers[meetId] = [];
+  meetingChats[meetId] = [];
   client.emit("newMeeting", {
     meetId,
   });
@@ -17,15 +18,60 @@ const newMeeting = (client) => {
 
 // Join meeting with meetId
 const joinMeeting = (client, userId, meetId, user) => {
-  // const meet = getMeet(meetId);
-  if (meetingRooms.has(meetId)) {
+  if (meetId && meetingRooms.has(meetId)) {
     console.log("join meeting", userId, user.name);
+    meetingUsers[meetId].push(user);
     client.join(meetId);
-    if (userId)
-      client.broadcast.to(meetId).emit("user-connected", { userId, user });
+    if (userId && user) {
+      client.emit("joined-meeting", meetingUsers[meetId], meetingChats[meetId]);
+      client.broadcast.to(meetId).emit("user-connected", {
+        userId,
+        user,
+        meetingUsers: meetingUsers[meetId],
+      });
+    }
   } else {
     client.emit("user-connected", { error: "Invalid meeting link" });
   }
 };
 
-module.exports = { newMeeting, joinMeeting, meetingRooms };
+// leave meeting
+const leaveMeeting = (client, data) => {
+  if (data.meetId && meetingRooms.has(data.meetId)) {
+    if (meetingUsers[data.meetId]) {
+      meetingUsers[data.meetId].splice(
+        meetingUsers[data.meetId].indexOf(data.user),
+        1
+      );
+      client.broadcast
+        .to(data.meetId)
+        .emit(
+          "user-disconnected",
+          data.id,
+          data.user,
+          meetingUsers[data.meetId]
+        );
+    }
+  }
+};
+
+// chat message sending
+const sendMessage = (text, user, meetId, time) => {
+  if (meetId && meetingRooms.has(meetId)) {
+    meetingChats[meetId].push({
+      text,
+      user,
+      time: time.substring(0, time.lastIndexOf(":")),
+    });
+    io.sockets.in(meetId).emit("receiveMessage", meetingChats[meetId]);
+  }
+};
+
+module.exports = {
+  newMeeting,
+  joinMeeting,
+  leaveMeeting,
+  sendMessage,
+  meetingRooms,
+  meetingUsers,
+};
