@@ -1,7 +1,30 @@
 /* // mobile .background not working*/
 
+/* Scrollbar CSS */
+
 * {
   scroll-behavior: smooth;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar:hover {
+  width: 6px;
+  transition: width 2s ease-in-out;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(170, 170, 170);
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(172, 170, 170);
 }
 
 .bg {
@@ -12,8 +35,8 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  -moz-appearace: none;
-  -webkit-appearace: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
   appearance: none;
 
   /* Set rules to fill background */

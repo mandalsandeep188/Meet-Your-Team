@@ -122,31 +122,33 @@ export default function StartMeetingScreen() {
   return (
     <div className="start-meeting">
       <div className="row">
-        <div className="col m6 s12">
+        <div className="col l6 m12 s12">
           <div className="video">
             <video
-              className="responsive-video z-depth-2"
+              className="responsive-video z-depth-3"
               ref={preview}
               muted={true}
               id="preview"
             />
-            <button
-              className="btn-floating btn-large red"
-              id="videocam"
-              onClick={toggleVideo}
-            >
-              <i className="material-icons">{videoStatus}</i>
-            </button>
-            <button
-              className="btn-floating btn-large red"
-              id="mic"
-              onClick={toggleAudio}
-            >
-              <i className="material-icons">{audioStatus}</i>
-            </button>
+            <div className="video-ctrl">
+              <button
+                className="btn-floating red"
+                id="videocam"
+                onClick={toggleVideo}
+              >
+                <i className="material-icons">{videoStatus}</i>
+              </button>
+              <button
+                className="btn-floating red"
+                id="mic"
+                onClick={toggleAudio}
+              >
+                <i className="material-icons">{audioStatus}</i>
+              </button>
+            </div>
           </div>
         </div>
-        <div className="col m6 s12">
+        <div className="col l6 m12 s12">
           <div className="row">
             <div className="col s12">
               <ul className="tabs">
