@@ -18,7 +18,7 @@
   height: 86vh;
   border-radius: 10px;
   width: 90%;
-  margin: auto;
+  margin: 20px auto;
   object-fit: cover;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
@@ -122,6 +122,7 @@
 
 @media screen and (max-width: 992px) {
   .video-grid video {
+    margin: auto;
     height: 40vh;
   }
   .video-grid {
