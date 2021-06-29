@@ -72,9 +72,26 @@
   border-radius: 10px;
 }
 
+.icon-btn {
+  position: absolute;
+  right: 10px;
+}
+
+.link {
+  font-size: 18px;
+  margin-top: 20px !important;
+  text-decoration: underline;
+  margin-left: 10px !important;
+  text-align: right;
+}
+
+.link a {
+  color: teal;
+}
+
 @media screen and (min-width: 992px) {
   .background {
     width: 50%;
-    margin-top: 10%;
+    margin-top: 8%;
   }
 }

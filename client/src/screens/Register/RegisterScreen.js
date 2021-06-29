@@ -4,11 +4,13 @@ import InputField from "../../components/InputField";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [password, setPasword] = useState("");
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState("password");
   const [profileImge, setProfileImge] = useState(undefined);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -44,6 +46,11 @@ export default function RegisterScreen() {
       });
   };
 
+  const togglePassword = () => {
+    if (showPassword === "password") setShowPassword("text");
+    else setShowPassword("password");
+  };
+
   return (
     <div className="container background">
       <div className="row">
@@ -53,14 +60,29 @@ export default function RegisterScreen() {
             <InputField type={"text"} label={"Name"} changer={setName} />
             <InputField type={"email"} label={"Email"} changer={setEmail} />
             <InputField
-              type={"password"}
+              type={showPassword}
               label={"Password"}
               changer={setPasword}
-            />
+            >
+              <button
+                className="btn-floating transparent icon-btn"
+                type="button"
+                onClick={togglePassword}
+              >
+                <i className="material-icons black-text">
+                  {showPassword === "password"
+                    ? "visibility_off"
+                    : "visibility"}
+                </i>
+              </button>
+            </InputField>
             <div className="col s3">
               <button className="btn" type="submit">
                 Register
               </button>
+            </div>
+            <div className="col s8 link">
+              <Link to="/login">Already have an account?</Link>
             </div>
           </div>
         </form>
