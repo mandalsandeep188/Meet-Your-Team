@@ -5,9 +5,13 @@ import { useHistory, useParams } from "react-router-dom";
 import M from "materialize-css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
+// import Slider from "react-slick";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
+import Video from "../../components/Video";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
@@ -25,6 +29,7 @@ export default function MeetingScreen() {
   const [audioStatus, setAudioStatus] = useState(
     streamState ? streamState.audioStatus : "mic"
   );
+  const [videoSrc, setVideoSrc] = useState([]);
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
   const [sideBar, setSideBar] = useState("close");
@@ -115,8 +120,6 @@ export default function MeetingScreen() {
 
   // start self stream
   const startStream = () => {
-    const video = document.createElement("video");
-    video.muted = true;
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -126,7 +129,7 @@ export default function MeetingScreen() {
         stream.getAudioTracks()[0].enabled = audioStatus === "mic";
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
         setStream(stream);
-        addVideoStream(video, stream);
+        setVideoSrc([...videoSrc, stream]);
       });
   };
 
@@ -147,11 +150,17 @@ export default function MeetingScreen() {
         const call = peer.call(userId, stream, {
           metadata: { userId: myId },
         });
+        // look for it------
         const video = document.createElement("video");
         peers.current[userId] = video;
+        //-------
+        let id;
         call.on("stream", (userVideoStream) => {
-          console.log("Getting reciever stream...");
-          addVideoStream(video, userVideoStream);
+          if (!id) {
+            console.log("Getting reciever stream...");
+            id = userVideoStream.id;
+            addVideoStream(userVideoStream);
+          }
         });
         call.on("close", () => {
           console.log("call closed");
@@ -175,29 +184,27 @@ export default function MeetingScreen() {
         setSendingStream(streams);
         console.log("Answering call...");
         call.answer(stream);
+        // look ---------
         const video = document.createElement("video");
         peers.current[call.metadata.userId] = video;
+        // ---------
+        let id;
         call.on("stream", (userVideoStream) => {
-          console.log("Getting caller's stream....");
-          addVideoStream(video, userVideoStream);
+          if (!id) {
+            console.log("Getting caller's stream....");
+            id = userVideoStream.id;
+            addVideoStream(userVideoStream);
+          }
         });
       });
   };
 
   // add video stream to UI
-  const addVideoStream = (video, stream) => {
-    video.classList.add(["responsive-video", "z-depth-3"]);
-    if (!video.srcObject) {
-      setPeopleCount(count.current + 1);
-      count.current = count.current + 1;
-      const gridCount = Math.ceil(count.current / 2);
-      const grid = document.getElementById(`grid${gridCount - 1}`);
-      grid.appendChild(video);
-    }
-    video.srcObject = stream;
-    video.addEventListener("loadedmetadata", () => {
-      video.play();
-    });
+  const addVideoStream = (stream) => {
+    console.log("Adding stream");
+    const streams = videoSrc;
+    streams.push(stream);
+    setVideoSrc(streams);
   };
 
   // video controls
@@ -233,6 +240,7 @@ export default function MeetingScreen() {
     }
   };
 
+  // sidebar controls
   const toggleSideBar = (toShow) => {
     setSideBar(toShow);
     window.scrollTo(0, document.body.scrollHeight);
@@ -244,38 +252,43 @@ export default function MeetingScreen() {
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
 
+  useEffect(() => {
+    console.log(videoSrc);
+  }, [videoSrc]);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    autoPlay: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
-    <div className="row meet-screen" style={{ backgroundColor: "#1b1919" }}>
+    <div className="row meet-screen">
       <div
         className={`col ${
           sideBar === "close" ? "m12" : "m9"
         } s12 scale-transition`}
         style={{ margin: "0px", padding: "0px", position: "relative" }}
       >
-        <Carousel
-          autoPlay={false}
-          showThumbs={false}
-          showStatus={false}
-          showIndicators={false}
-          dynamicHeight={true}
-        >
-          {[...Array(Math.ceil(peopleCount / 2))].map((e, index) => {
-            return (
-              <div
-                className="video-grid"
-                id={`grid${index}`}
-                key={index}
-                style={{
-                  gridTemplateColumns: `repeat(${Math.min(
-                    2,
-                    peopleCount
-                  )},1fr)`,
-                  gridTemplateRows: `repeat(${Math.ceil(peopleCount / 2)},1fr)`,
-                }}
-              ></div>
-            );
-          })}
-        </Carousel>
+        <div className="video-grid">
+          <Carousel
+            autoPlay={false}
+            dynamicHeight={true}
+            showThumbs={false}
+            showIndicators={false}
+          >
+            {videoSrc.map((srcObject, index) => {
+              return (
+                <div key={index}>
+                  <Video srcObject={srcObject} muted={index === 0} />
+                </div>
+              );
+            })}
+          </Carousel>
+        </div>
+
         <div className="video-controls">
           <button className="btn-floating btn red" onClick={toggleVideo}>
             <i className="material-icons">{videoStatus}</i>
