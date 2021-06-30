@@ -28,7 +28,7 @@ export default function Navbar() {
             alt="Meet Your Team"
           />
         </Link>
-        <ul id="nav-mobile" className="right hide-on-med-and-down">
+        <ul id="nav-mobile" className="right">
           {!user ? (
             <>
               <li>

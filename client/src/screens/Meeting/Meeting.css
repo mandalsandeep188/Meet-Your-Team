@@ -2,9 +2,11 @@
   overflow-y: auto;
   width: 100vw;
   overflow-x: hidden;
+  background-color: #1b1919;
 }
 
 .video-grid {
+  display: grid;
   background-color: #1b1919;
   min-height: 100vh;
 }
@@ -101,8 +103,8 @@
 }
 
 .message::selection {
-  background-color: teal;
-  color: white;
+  background-color: teal !important;
+  color: white !important;
 }
 
 .leftmsg {
@@ -116,13 +118,12 @@
   color: white;
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 800px) {
   .video-grid video {
     margin: auto;
     height: 40vh;
   }
   .video-grid {
     grid-template-columns: repeat(1, 1fr) !important;
-    grid-template-rows: none !important;
   }
 }

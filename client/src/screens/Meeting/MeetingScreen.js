@@ -3,10 +3,8 @@ import Peer from "peerjs";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import M from "materialize-css";
+import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
@@ -18,9 +16,6 @@ export default function MeetingScreen() {
   const [stream, setStream] = useState(null);
   const [sendingStream, setSendingStream] = useState([]);
   const [peer, setPeer] = useState();
-  const peers = useRef({});
-  const [peopleCount, setPeopleCount] = useState(0);
-  const count = useRef(0);
   const history = useHistory();
   const [videoStatus, setVideoStatus] = useState(
     streamState ? streamState.videoStatus : "videocam"
@@ -28,8 +23,8 @@ export default function MeetingScreen() {
   const [audioStatus, setAudioStatus] = useState(
     streamState ? streamState.audioStatus : "mic"
   );
-  const streams = useRef([]);
-  const [videoSrc, setVideoSrc] = useState([]);
+  const streams = useRef({});
+  const [videoSrc, setVideoSrc] = useState({});
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
   const [sideBar, setSideBar] = useState("close");
@@ -108,10 +103,10 @@ export default function MeetingScreen() {
         setMeetingUsers(meetingUsers);
         if (userId) {
           M.toast({ html: `${user.name} left the meeting` });
-          if (peers.current[userId]) {
-            peers.current[userId].remove();
-            setPeopleCount(count.current - 1);
-            count.current = count.current - 1;
+          if (streams.current[userId]) {
+            let { [userId]: _, ...videoStreams } = streams.current;
+            setVideoSrc(videoStreams);
+            streams.current = videoStreams;
           }
         }
       });
@@ -129,8 +124,7 @@ export default function MeetingScreen() {
         stream.getAudioTracks()[0].enabled = audioStatus === "mic";
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
         setStream(stream);
-        streams.current.push(stream);
-        setVideoSrc(streams.current);
+        addVideoStream(stream, "myStream");
       });
   };
 
@@ -151,21 +145,13 @@ export default function MeetingScreen() {
         const call = peer.call(userId, stream, {
           metadata: { userId: myId },
         });
-        // look for it------
-        const video = document.createElement("video");
-        peers.current[userId] = video;
-        //-------
         let id;
         call.on("stream", (userVideoStream) => {
           if (id != userVideoStream.id) {
             console.log("Getting reciever stream...");
             id = userVideoStream.id;
-            addVideoStream(userVideoStream);
+            addVideoStream(userVideoStream, userId);
           }
-        });
-        call.on("close", () => {
-          console.log("call closed");
-          video.remove();
         });
       });
   };
@@ -185,26 +171,21 @@ export default function MeetingScreen() {
         setSendingStream(streams);
         console.log("Answering call...");
         call.answer(stream);
-        // look ---------
-        const video = document.createElement("video");
-        peers.current[call.metadata.userId] = video;
-        // ---------
         let id;
         call.on("stream", (userVideoStream) => {
           if (id != userVideoStream.id) {
             console.log("Getting caller's stream....");
             id = userVideoStream.id;
-            addVideoStream(userVideoStream);
+            addVideoStream(userVideoStream, call.metadata.userId);
           }
         });
       });
   };
 
   // add video stream to UI
-  const addVideoStream = (stream) => {
-    console.log("Adding stream", stream.id);
-    streams.current.push(stream);
-    setVideoSrc(streams.current);
+  const addVideoStream = (stream, userId) => {
+    setVideoSrc({ ...streams.current, [userId]: stream });
+    streams.current = { ...streams.current, [userId]: stream };
   };
 
   // video controls
@@ -256,21 +237,6 @@ export default function MeetingScreen() {
     console.log("State changed", videoSrc);
   }, [videoSrc]);
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    autoPlay: false,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
-  //   <Carousel
-  //   autoPlay={false}
-  //   dynamicHeight={true}
-  //   showThumbs={false}
-  //   showIndicators={false}
-  // >
-
   return (
     <div className="row meet-screen">
       <div
@@ -279,15 +245,43 @@ export default function MeetingScreen() {
         } s12 scale-transition`}
         style={{ margin: "0px", padding: "0px", position: "relative" }}
       >
-        <div className="video-grid">
-          <Slider {...settings}>
-            {videoSrc.map((srcObject, index) => {
+        <Carousel
+          autoPlay={false}
+          dynamicHeight={true}
+          showThumbs={false}
+          showIndicators={false}
+        >
+          {/* Adjusting videos in grid */}
+          {[...Array(Math.ceil(Object.entries(videoSrc).length / 2))].map(
+            (e, index) => {
               return (
-                <Video srcObject={srcObject} muted={index === 0} key={index} />
+                <div
+                  key={index}
+                  className="video-grid"
+                  style={{
+                    gridTemplateColumns: `repeat(${
+                      2 * index + 1 < Object.entries(videoSrc).length
+                        ? "2"
+                        : "1"
+                    }, 1fr)`,
+                  }}
+                >
+                  <Video
+                    srcObject={Object.entries(videoSrc)[2 * index][1]}
+                    muted={
+                      Object.entries(videoSrc)[2 * index][0] === "myStream"
+                    }
+                  />
+                  {2 * index + 1 < Object.entries(videoSrc).length && (
+                    <Video
+                      srcObject={Object.entries(videoSrc)[2 * index + 1][1]}
+                    />
+                  )}
+                </div>
               );
-            })}
-          </Slider>
-        </div>
+            }
+          )}
+        </Carousel>
         <div className="video-controls">
           <button className="btn-floating btn red" onClick={toggleVideo}>
             <i className="material-icons">{videoStatus}</i>
