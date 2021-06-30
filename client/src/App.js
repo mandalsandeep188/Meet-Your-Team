@@ -1,8 +1,10 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
+import firebase from "./utils/firebase";
 import Routing from "./components/Routing";
-import firebaseConfig from "./constants/firebase";
+import "firebase/analytics";
+firebase.analytics();
 
 function App() {
   return (

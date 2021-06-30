@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import LoginScreen from "../screens/Login/LoginScreen";
 import Navbar from "../components/Navbar/Navbar";
 import HomeScreen from "../screens/Home/HomeScreen";

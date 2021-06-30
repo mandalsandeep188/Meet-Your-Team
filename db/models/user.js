@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: "user.jpeg",
+    default:
+      "https://firebasestorage.googleapis.com/v0/b/meet-your-team.appspot.com/o/user.jpeg?alt=media&token=7e223194-40f7-4e1f-bb56-9d8d0ec0b5c9",
   },
 });
 
