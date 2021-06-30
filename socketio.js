@@ -19,10 +19,10 @@ const newMeeting = (client) => {
 // Join meeting with meetId
 const joinMeeting = (client, userId, meetId, user) => {
   if (meetId && meetingRooms.has(meetId)) {
-    console.log("join meeting", userId, user.name);
     meetingUsers[meetId].push(user);
     client.join(meetId);
     if (userId && user) {
+      console.log("join meeting", userId, user.name);
       client.emit("joined-meeting", meetingUsers[meetId], meetingChats[meetId]);
       client.broadcast.to(meetId).emit("user-connected", {
         userId,
