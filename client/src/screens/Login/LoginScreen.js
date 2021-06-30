@@ -4,10 +4,12 @@ import InputField from "../../components/InputField";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function LoginScreen() {
   const [password, setPasword] = useState("");
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState("password");
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -40,6 +42,11 @@ export default function LoginScreen() {
       });
   };
 
+  const togglePassword = () => {
+    if (showPassword === "password") setShowPassword("text");
+    else setShowPassword("password");
+  };
+
   return (
     <div className="container background">
       <div className="row">
@@ -48,14 +55,29 @@ export default function LoginScreen() {
           <div className="row">
             <InputField type={"email"} label={"Email"} changer={setEmail} />
             <InputField
-              type={"password"}
+              type={showPassword}
               label={"Password"}
               changer={setPasword}
-            />
+            >
+              <button
+                className="btn-floating transparent icon-btn"
+                type="button"
+                onClick={togglePassword}
+              >
+                <i className="material-icons black-text">
+                  {showPassword === "password"
+                    ? "visibility_off"
+                    : "visibility"}
+                </i>
+              </button>
+            </InputField>
             <div className="col s3">
               <button className="btn" type="submit">
                 Login
               </button>
+            </div>
+            <div className="col s8 link">
+              <Link to="/register">Create a new account</Link>
             </div>
           </div>
         </form>

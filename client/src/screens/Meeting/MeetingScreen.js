@@ -65,7 +65,7 @@ export default function MeetingScreen() {
         new Peer(user._id, {
           host: "/",
           path: "/peer",
-          port: 5000,
+          port: 443,
         })
       );
     }

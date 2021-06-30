@@ -8,7 +8,7 @@ import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
 import { loginUser } from "../../redux/actions/userActions";
 
-export const socket = io("http://localhost:5000");
+export const socket = io("https://meetyourteam.herokuapp.com");
 
 export default function StartMeetingScreen() {
   const [stream, setStream] = useState(null);
@@ -19,15 +19,12 @@ export default function StartMeetingScreen() {
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer);
-  const streamState = useSelector((state) => state.streamReducer);
 
   useEffect(() => {
     M.AutoInit();
     fetch("/startmeet", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
-        pragma: "no-cache",
-        "Cache-Control": "no-cache",
       },
     })
       .then((res) => res.json())
@@ -36,7 +33,6 @@ export default function StartMeetingScreen() {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
           history.replace("/login");
         } else {
-          console.log("Athenticated");
           dispatch(loginUser(user));
           startStream();
         }
@@ -100,7 +96,9 @@ export default function StartMeetingScreen() {
     socket.emit("newMeeting");
     socket.on("newMeeting", (data) => {
       history.push(`/meet/${data.meetId}`);
-      M.toast({ html: `Meet link: http://localhost:3000/meet/${data.meetId}` });
+      M.toast({
+        html: `Meet link: https://meetyourteam.herokuapp.com/meet/${data.meetId}`,
+      });
     });
   };
 

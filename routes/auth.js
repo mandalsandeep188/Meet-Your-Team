@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 // JWT_SECRET for authentication by jwt
 const { JWT_SECRET } = require("../config/keys");
@@ -30,27 +31,30 @@ router.post("/register", (req, res) => {
     }
   });
 
-  // Creating new User instance
-  const user = new User({
-    email,
-    password,
-    name,
-    profileImage,
-  });
+  // Hashing password
+  bcrypt.hash(password, 12).then((hashedPassword) => {
+    // Creating new User instance
+    const user = new User({
+      email,
+      password: hashedPassword,
+      name,
+      profileImage,
+    });
 
-  // Registering new user
-  user
-    .save()
-    .then((registeredUser) => {
-      const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
-      const { _id, name, email, profileImage } = registeredUser;
-      res.json({
-        message: "Registered successfully",
-        token,
-        user: { _id, name, email, profileImage },
-      });
-    })
-    .catch((err) => console.log(err));
+    // Registering new user
+    user
+      .save()
+      .then((registeredUser) => {
+        const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
+        const { _id, name, email, profileImage } = registeredUser;
+        res.json({
+          message: "Registered successfully",
+          token,
+          user: { _id, name, email, profileImage },
+        });
+      })
+      .catch((err) => console.log(err));
+  });
 });
 
 // Login post request
@@ -72,20 +76,22 @@ router.post("/login", (req, res) => {
       }
 
       // Checking password is correct
-      if (registeredUser.password === password) {
-        // If correct password entered
-        // logging in the user and getting the user data
-        const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
-        const { _id, name, email, profileImage } = registeredUser;
-        res.json({
-          message: "Logged in successfully",
-          token,
-          user: { _id, name, email, profileImage },
-        });
-      } else {
-        // If password is wrong
-        return res.status(422).json({ error: "Invalid Email or password" });
-      }
+      bcrypt.compare(password, registeredUser.password).then((match) => {
+        if (match) {
+          // If correct password entered
+          // logging in the user and getting the user data
+          const token = jwt.sign({ _id: registeredUser._id }, JWT_SECRET);
+          const { _id, name, email, profileImage } = registeredUser;
+          res.json({
+            message: "Logged in successfully",
+            token,
+            user: { _id, name, email, profileImage },
+          });
+        } else {
+          // If password is wrong
+          return res.status(422).json({ error: "Invalid Email or password" });
+        }
+      });
     })
     .catch((err) => console.log(err));
 });

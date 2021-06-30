@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../screens/StartMeeting/StartMeetingScreen";
 
 export default function Sidebar(props) {
-  const user = useSelector((state) => state.userReducer);
+  const user = useRef(JSON.parse(localStorage.getItem("user")));
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -20,7 +19,7 @@ export default function Sidebar(props) {
     if (message.length != 0)
       socket.emit("sendMessage", {
         msg: message,
-        user,
+        user: user.current,
         meetId: props.meetId,
         time: new Date().toLocaleTimeString(),
       });
@@ -69,7 +68,9 @@ export default function Sidebar(props) {
               return (
                 <div
                   className={`message ${
-                    message.user._id === user._id ? "rightmsg" : "leftmsg"
+                    message.user._id === user.current._id
+                      ? "rightmsg"
+                      : "leftmsg"
                   }`}
                   key={index}
                 >
