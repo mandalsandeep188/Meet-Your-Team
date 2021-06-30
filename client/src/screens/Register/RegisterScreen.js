@@ -1,22 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import firebase from "../../utils/firebase";
+import "./Register.css";
+import "firebase/storage";
+const storageRef = firebase.storage().ref();
+
+const userDefault =
+  "https://firebasestorage.googleapis.com/v0/b/meet-your-team.appspot.com/o/user.jpeg?alt=media&token=7e223194-40f7-4e1f-bb56-9d8d0ec0b5c9";
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [password, setPasword] = useState("");
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState("password");
-  const [profileImge, setProfileImge] = useState(undefined);
+  const [profileImage, setProfileImage] = useState(undefined);
+  const [imageText, setImageText] = useState("Upload profile image");
+  const [imagePreview, setImagePreview] = useState(userDefault);
+  const [imageUrl, setImageUrl] = useState(null);
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const register = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (profileImage) {
+      let reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result);
+        setImageText("Change profile imgage");
+      };
+      reader.readAsDataURL(profileImage);
+    }
+  }, [profileImage]);
+
+  const registerUser = () => {
     fetch("/register", {
       method: "post",
       headers: {
@@ -24,9 +44,9 @@ export default function RegisterScreen() {
       },
       body: JSON.stringify({
         name,
-        password,
         email,
-        profileImge,
+        password,
+        profileImage: imageUrl,
       }),
     })
       .then((res) => res.json())
@@ -41,10 +61,51 @@ export default function RegisterScreen() {
           history.push("/");
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((err) => console.log(err.message));
+  };
+
+  const register = (e) => {
+    e.preventDefault();
+    fetch("/checkEmail", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          M.toast({ html: "Some error occurred! Try again" });
+        } else {
+          if (profileImage) {
+            const fileName = `users/${email}`;
+            storageRef
+              .child(fileName)
+              .put(profileImage)
+              .then(() => {
+                storageRef
+                  .child(fileName)
+                  .getDownloadURL()
+                  .then((url) => {
+                    setImageUrl(url);
+                  })
+                  .catch((error) => {
+                    console.log(error.code);
+                  });
+              });
+          } else {
+            registerUser();
+          }
+        }
       });
   };
+
+  useEffect(() => {
+    if (imageUrl) registerUser();
+  }, [imageUrl]);
 
   const togglePassword = () => {
     if (showPassword === "password") setShowPassword("text");
@@ -55,6 +116,13 @@ export default function RegisterScreen() {
     <div className="container background">
       <div className="row">
         <h4 className="center-align">Register with Meet Your Team</h4>
+        <div className="col s12">
+          <img
+            className="register-pic responsive-img"
+            src={imagePreview}
+            alt="Profile pic"
+          ></img>
+        </div>
         <form className="col s12" onSubmit={(e) => register(e)}>
           <div className="row">
             <InputField type={"text"} label={"Name"} changer={setName} />
@@ -76,6 +144,16 @@ export default function RegisterScreen() {
                 </i>
               </button>
             </InputField>
+            <div className="col s12">
+              <input
+                type="file"
+                id="file"
+                onChange={(e) => setProfileImage(e.target.files[0])}
+              />
+              <label htmlFor="file" className="waves-effect btn">
+                {imageText}
+              </label>
+            </div>
             <div className="col s3">
               <button className="btn" type="submit">
                 Register

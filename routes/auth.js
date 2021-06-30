@@ -96,5 +96,16 @@ router.post("/login", (req, res) => {
     .catch((err) => console.log(err));
 });
 
+router.post("/checkEmail", (req, res) => {
+  const { email } = req.body;
+  User.findOne({ email: email }).then((user) => {
+    if (user) {
+      return res.json({ error: "User already exists with that email" });
+    } else {
+      return res.json({ error: null });
+    }
+  });
+});
+
 // Exporting router
 module.exports = router;

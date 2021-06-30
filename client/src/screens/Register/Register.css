@@ -1,0 +1,14 @@
+input[type="file"] {
+  height: 0;
+  overflow: hidden;
+  width: 0;
+}
+
+.register-pic {
+  display: block;
+  margin: 10px auto;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+}
