@@ -34,12 +34,21 @@ router.post("/register", (req, res) => {
   // Hashing password
   bcrypt.hash(password, 12).then((hashedPassword) => {
     // Creating new User instance
-    const user = new User({
-      email,
-      password: hashedPassword,
-      name,
-      profileImage,
-    });
+    let user = null;
+    if (profileImage) {
+      user = new User({
+        email,
+        password: hashedPassword,
+        name,
+        profileImage,
+      });
+    } else {
+      user = new User({
+        email,
+        password: hashedPassword,
+        name,
+      });
+    }
 
     // Registering new user
     user
