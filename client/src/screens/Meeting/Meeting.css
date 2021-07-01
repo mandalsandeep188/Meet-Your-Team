@@ -5,18 +5,28 @@
   background-color: #1b1919;
 }
 
+.carousel .slider-wrapper {
+  overflow: unset !important;
+}
+
 .video-grid {
   display: grid;
   background-color: #1b1919;
   min-height: 100vh;
 }
 
-.video-grid video {
-  display: block;
-  height: 86vh;
-  border-radius: 10px;
+.video-grid .video {
+  position: relative;
+  margin: auto;
   width: 90%;
+  height: 86vh;
   margin: 20px auto;
+}
+
+.video-grid video {
+  height: 100%;
+  border-radius: 10px;
+  width: 100%;
   object-fit: cover;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
@@ -59,6 +69,21 @@
   padding: 10px !important;
   height: 100vh;
   animation: slide 0.2s forwards;
+}
+
+.user-name {
+  position: absolute;
+  bottom: 2%;
+  left: 0;
+  width: 100%;
+  color: white;
+}
+
+.meet-user img {
+  width: 20% !important;
+  display: block;
+  margin: auto;
+  margin-top: 10%;
 }
 
 #textarea {
@@ -119,7 +144,7 @@
 }
 
 @media screen and (max-width: 800px) {
-  .video-grid video {
+  .video-grid .video {
     margin: auto;
     height: 40vh;
   }

@@ -50,10 +50,8 @@ app.use(require("./routes/meet"));
 const {
   newMeeting,
   joinMeeting,
-  meetingUsers,
   leaveMeeting,
   sendMessage,
-  receiveMessage,
 } = require("./socketio");
 
 // Socket IO related events
@@ -77,7 +75,7 @@ io.on("connection", (client) => {
 });
 
 // Peer server events
-peerServer.on("connection", (client) => {
+peerServer.on("connection", () => {
   console.log("Connected to peer server");
 });
 

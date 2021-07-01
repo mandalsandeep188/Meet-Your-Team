@@ -8,7 +8,7 @@ import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
 import { loginUser } from "../../redux/actions/userActions";
 
-export const socket = io("https://meetyourteam.herokuapp.com/");
+export const socket = io("http://localhost:5000");
 
 export default function StartMeetingScreen() {
   const [stream, setStream] = useState(null);
