@@ -28,6 +28,7 @@ export default function Routing() {
         <RegisterScreen />
       </Route>
       <Route path="/startMeeting">
+        <Navbar />
         <StartMeetingScreen />
       </Route>
       <Route path="/meet/:meetId">

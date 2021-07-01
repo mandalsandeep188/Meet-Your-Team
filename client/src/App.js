@@ -9,7 +9,6 @@ firebase.analytics();
 function App() {
   return (
     <>
-      <div className="bg"></div>
       <div className="App">
         <BrowserRouter>
           <Routing />

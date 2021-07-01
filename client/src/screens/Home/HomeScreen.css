@@ -1,14 +1,33 @@
 .welcome {
-  background-color: rgba(0, 0, 0, 0.8); /* Black w/opacity/see-through */
   color: white;
   padding: 5%;
-  margin-left: 5%;
-  margin-top: 9%;
-  border-radius: 10px 0 0 10px;
+  margin-top: 2%;
+}
+
+.welcome img {
+  border-radius: 10px;
+}
+
+.welcome p {
+  width: 70%;
 }
 
 @media screen and (max-width: 992px) {
   .welcome {
-    margin-top: 25%;
+    margin-top: 30px;
+    padding: 0 5%;
+  }
+  .welcome h3 {
+    font-size: 28px;
+  }
+  .welcome p {
+    font-size: 12px;
+    width: 90%;
+  }
+  .welcome img {
+    margin: 10% auto;
+  }
+  .welcome button {
+    text-align: center;
   }
 }

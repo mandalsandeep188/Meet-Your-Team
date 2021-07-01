@@ -1,9 +1,23 @@
-/* // mobile .background not working*/
-
 /* Scrollbar CSS */
 
 * {
   scroll-behavior: smooth;
+}
+
+body {
+  background: #0f0c29; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #24243e,
+    #302b63,
+    #0f0c29
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #24243e,
+    #302b63,
+    #0f0c29
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 /* width */
@@ -27,39 +41,9 @@
   background: rgb(172, 170, 170);
 }
 
-.bg {
-  /* Seeting background image */
-  background: url(./assets/meeting.jpg) rgb(169, 189, 253) no-repeat center
-    center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  appearance: none;
-
-  /* Set rules to fill background */
-  min-height: 100%;
-  min-width: 1024px;
-
-  /* Set up proportionate scaling */
-  width: 100%;
-  height: auto;
-
-  /* Set up positioning */
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  /* Add the blur effect */
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
-}
-
 .App {
   position: relative;
-  z-index: 2;
+  /* z-index: 2; */
 }
 
 /* auth background */

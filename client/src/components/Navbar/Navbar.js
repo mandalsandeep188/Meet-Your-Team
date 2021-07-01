@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/actions/userActions";
@@ -18,17 +18,24 @@ export default function Navbar() {
     });
   };
 
+  useEffect(() => {
+    M.AutoInit();
+  }, []);
+
   return (
-    <nav style={{ boxShadow: "none" }} className="transparent">
+    <nav style={{ boxShadow: "none", padding: "20px" }} className="transparent">
       <div className="nav-wrapper">
-        <Link to="/" className="brand-logo center">
+        <Link to="/" className="brand-logo row logo left">
           <img
             src={"logo.png"}
-            className="responsive-img logo"
+            className="responsive-img col s4"
             alt="Meet Your Team"
           />
+          <h6 className="col s8">Meet Your Team</h6>
         </Link>
-        <ul id="nav-mobile" className="right">
+
+        {/* To show in pc */}
+        <ul id="nav-mobile" className="right hide-on-small-and-down">
           {!user ? (
             <>
               <li>
@@ -52,6 +59,34 @@ export default function Navbar() {
                 >
                   Log out
                 </button>
+              </li>
+            </>
+          )}
+        </ul>
+
+        {/* To show in mobile */}
+        <button
+          className="btn-flat dropdown-trigger hide-on-med-and-up right"
+          data-target="dropdown"
+        >
+          <i className="material-icons teal-text">menu</i>
+        </button>
+        <ul id="dropdown" className="dropdown-content hide-on-med-and-up">
+          {!user ? (
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="#" onClick={logout}>
+                  Log out
+                </Link>
               </li>
             </>
           )}
