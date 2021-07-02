@@ -5,6 +5,7 @@ import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import "./Auth.css";
 
 export default function LoginScreen() {
   const [password, setPasword] = useState("");
@@ -48,9 +49,11 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="container background">
+    <div className="container auth" style={{ marginTop: "90px" }}>
       <div className="row">
-        <h4 className="center-align">Login to Meet Your Team</h4>
+        <h4 className="col s12">
+          Login to <span>Meet Your Team</span>
+        </h4>
         <form className="col s12" onSubmit={(e) => login(e)}>
           <div className="row">
             <InputField type={"email"} label={"Email"} changer={setEmail} />
@@ -76,7 +79,7 @@ export default function LoginScreen() {
                 Login
               </button>
             </div>
-            <div className="col s8 link">
+            <div className="col m8 s12 link">
               <Link to="/register">Create a new account</Link>
             </div>
           </div>

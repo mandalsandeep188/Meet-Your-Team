@@ -121,7 +121,7 @@ export default function StartMeetingScreen() {
         <div className="col l6 m12 s12">
           <div className="video">
             <video
-              className="responsive-video z-depth-3"
+              className="responsive-video z-depth-2"
               ref={preview}
               muted={true}
               id="preview"
@@ -160,13 +160,13 @@ export default function StartMeetingScreen() {
                 </li>
               </ul>
               <div id="newMeet" className="col s12 meet-option">
-                <h4>Host a new meeting</h4>
+                <h5>Host a new meeting</h5>
                 <button className="btn" onClick={newMeeting}>
                   Start New Meeting
                 </button>
               </div>
               <div id="joinMeet" className="col s12 meet-option">
-                <h4>Join a meeting</h4>
+                <h5>Join a meeting</h5>
                 <InputField
                   type="text"
                   label="Meeting Link"

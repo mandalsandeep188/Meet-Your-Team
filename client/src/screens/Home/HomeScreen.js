@@ -8,13 +8,12 @@ export default function HomeScreen() {
       <div className="row welcome">
         <div className="col s12 m12 l7" style={{ paddingTop: "15px" }}>
           <h3>
-            Welcome to <br />
-            Meet Your Team
+            Welcome to <span>Meet Your Team</span>
           </h3>
           <p>
             Grow and learn with your team here! <br />
-            Reach your team of work or school across the <br />
-            world to interact with them in a easy and effective way.
+            Reach your team of work or school across the world <br />
+            to interact with them in a easy and effective way.
           </p>
           <Link to="/startMeeting" className="btn" style={{ margin: "10px 0" }}>
             Start Meeting

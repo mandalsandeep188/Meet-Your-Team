@@ -6,7 +6,7 @@ import M from "materialize-css";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import firebase from "../../utils/firebase";
-import "./Register.css";
+import "../Login/Auth.css";
 import "firebase/storage";
 const storageRef = firebase.storage().ref();
 
@@ -113,15 +113,31 @@ export default function RegisterScreen() {
   };
 
   return (
-    <div className="container background">
+    <div className="container auth">
       <div className="row">
-        <h4 className="center-align">Register with Meet Your Team</h4>
+        <h4>
+          Register with <span>Meet Your Team</span>
+        </h4>
         <div className="col s12">
           <img
             className="register-pic responsive-img"
             src={imagePreview}
             alt="Profile pic"
           ></img>
+        </div>
+        <div className="col s12 center">
+          <input
+            type="file"
+            id="file"
+            onChange={(e) => setProfileImage(e.target.files[0])}
+          />
+          <label
+            htmlFor="file"
+            className="waves-effect btn"
+            style={{ marginTop: "0" }}
+          >
+            {imageText}
+          </label>
         </div>
         <form className="col s12" onSubmit={(e) => register(e)}>
           <div className="row">
@@ -144,22 +160,12 @@ export default function RegisterScreen() {
                 </i>
               </button>
             </InputField>
-            <div className="col s12">
-              <input
-                type="file"
-                id="file"
-                onChange={(e) => setProfileImage(e.target.files[0])}
-              />
-              <label htmlFor="file" className="waves-effect btn">
-                {imageText}
-              </label>
-            </div>
             <div className="col s3">
               <button className="btn" type="submit">
                 Register
               </button>
             </div>
-            <div className="col s8 link">
+            <div className="col m8 s12 link">
               <Link to="/login">Already have an account?</Link>
             </div>
           </div>
