@@ -81,24 +81,10 @@ peerServer.on("connection", () => {
 
 // ===================== Production setup ===================
 
-// https redirect filter
-const redirectionFilter = function (req, res, next) {
-  const theDate = new Date();
-  const receivedUrl = `${req.protocol}:\/\/${req.hostname}:${port}${req.url}`;
-
-  if (req.get("X-Forwarded-Proto") === "http") {
-    const redirectTo = `https:\/\/${req.hostname}${req.url}`;
-    console.log(`${theDate} Redirecting ${receivedUrl} --> ${redirectTo}`);
-    res.redirect(301, redirectTo);
-  } else {
-    next();
-  }
-};
-
 if (process.env.NODE_ENV == "production") {
   app.use(express.static("client/build"));
   const path = require("path");
-  app.get("*", redirectionFilter, (req, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 }
