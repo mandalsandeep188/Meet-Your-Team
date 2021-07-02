@@ -4,6 +4,7 @@ import { socket } from "../screens/StartMeeting/StartMeetingScreen";
 export default function Sidebar(props) {
   const user = useRef(JSON.parse(localStorage.getItem("user")));
   const [msg, setMsg] = useState("");
+  const send = useRef();
 
   useEffect(() => {
     socket.on("receiveMessage", (meetingChats) => {
@@ -24,6 +25,7 @@ export default function Sidebar(props) {
         time: new Date().toLocaleTimeString(),
       });
     setMsg("");
+    send.current.focus();
   };
 
   return (
@@ -89,19 +91,21 @@ export default function Sidebar(props) {
           </div>
           <div className="send">
             <div className="input-field">
-              <textarea
-                id="textarea"
-                className="materialize-textarea"
+              <input
+                id="message"
+                ref={send}
+                className="validate"
                 value={msg}
+                placeholder="Send a message..."
                 onChange={(e) => {
                   setMsg(e.target.value);
                 }}
-              ></textarea>
-              <label htmlFor="textarea">Send a message...</label>
+              />
             </div>
             <div>
               <button
                 className="btn-flat btn-large transparent"
+                style={{ marginLeft: "10px" }}
                 onClick={sendMessage}
               >
                 <i className="material-icons teal-text">send</i>

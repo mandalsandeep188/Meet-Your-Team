@@ -2,6 +2,7 @@
   overflow-y: auto;
   width: 100vw;
   overflow-x: hidden;
+  margin: 0;
 }
 
 .carousel .slider-wrapper {
@@ -85,10 +86,13 @@
   margin-top: 10%;
 }
 
-#textarea {
-  max-height: 50px !important;
-  overflow-y: auto;
-  padding: 5px 0;
+#message {
+  overflow-x: hidden;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 400;
+  padding: 0 5px;
 }
 
 .send {

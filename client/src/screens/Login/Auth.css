@@ -1,0 +1,85 @@
+/* auth background */
+.auth {
+  background: #d3cce3; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #ffffff,
+    #c0f2fa
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ffffff,
+    #c0f2fa
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  width: 50%;
+  margin: 20px auto;
+  padding: 20px;
+  padding-bottom: 2px;
+  border-radius: 10px;
+}
+
+.auth h4 {
+  text-align: center;
+}
+
+.auth h4 span {
+  color: teal;
+  font-weight: bold;
+}
+
+.icon-btn {
+  position: absolute;
+  right: 10px;
+  box-shadow: none;
+}
+
+.icon-btn :active,
+.icon-btn:focus,
+.icon-btn:hover {
+  box-shadow: none !important;
+}
+
+.link {
+  font-size: 18px;
+  margin-top: 20px !important;
+  text-decoration: underline;
+  margin-left: 10px !important;
+  text-align: right;
+  padding: 0 !important;
+}
+
+.link a {
+  color: teal;
+}
+
+input[type="file"] {
+  height: 0;
+  overflow: hidden;
+  width: 0;
+}
+
+.register-pic {
+  display: block;
+  margin: 10px auto;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+@media screen and (max-width: 992px) {
+  .auth {
+    margin-top: 50px;
+    width: 90%;
+  }
+  .auth h4 {
+    font-size: 25px;
+  }
+  .auth h4 span {
+    display: block;
+  }
+  .link {
+    text-align: left;
+  }
+}
