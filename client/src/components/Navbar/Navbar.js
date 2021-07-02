@@ -23,7 +23,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav style={{ boxShadow: "none", padding: "20px" }} className="transparent">
+    <nav style={{ boxShadow: "none", padding: "10px" }} className="transparent">
       <div className="nav-wrapper">
         <Link to="/" className="brand-logo row logo left">
           <img

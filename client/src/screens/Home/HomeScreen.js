@@ -13,8 +13,8 @@ export default function HomeScreen() {
           </h3>
           <p>
             Grow and learn with your team here! <br />
-            Reach your team of work or school across the world to interact with
-            them in a easy and effective way.
+            Reach your team of work or school across the <br />
+            world to interact with them in a easy and effective way.
           </p>
           <Link to="/startMeeting" className="btn" style={{ margin: "10px 0" }}>
             Start Meeting
