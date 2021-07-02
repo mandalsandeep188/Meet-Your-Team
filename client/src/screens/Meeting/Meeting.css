@@ -2,7 +2,6 @@
   overflow-y: auto;
   width: 100vw;
   overflow-x: hidden;
-  background-color: #1b1919;
 }
 
 .carousel .slider-wrapper {
@@ -144,6 +143,9 @@
 }
 
 @media screen and (max-width: 800px) {
+  .meet-screen {
+    background-color: white;
+  }
   .video-grid .video {
     margin: auto;
     height: 40vh;
