@@ -1,6 +1,7 @@
 .welcome {
   color: white;
-  padding: 5%;
+  padding: 4%;
+  padding-bottom: 1%;
   margin-top: 2%;
 }
 
@@ -20,6 +21,13 @@
 
 .welcome p {
   width: 70%;
+}
+
+.people {
+  width: 25%;
+  position: absolute;
+  bottom: 6%;
+  left: 4%;
 }
 
 @media screen and (max-width: 992px) {

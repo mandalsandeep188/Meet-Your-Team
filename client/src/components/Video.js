@@ -1,20 +1,26 @@
 import React, { useEffect, useRef } from "react";
 
-export default function Video({ srcObject, muted, name }) {
+export default function Video(props) {
   const ref = useRef();
   useEffect(() => {
-    ref.current.srcObject = srcObject;
-  }, [srcObject]);
+    ref.current.srcObject = props.srcObject;
+  }, [props.srcObject]);
   return (
-    <div className="video">
+    <div
+      className="video"
+      style={{ height: `${props.fullHeight ? "86vh" : ""}` }}
+    >
       <video
         className="responsive-video"
         ref={ref}
-        muted={muted}
-        onLoadedMetadata={() => ref.current.play()}
+        muted={props.muted}
+        onLoadedMetadata={() => {
+          ref.current.play();
+          props.loader(false);
+        }}
       />
       <div className="user-name">
-        <h6>{name}</h6>
+        <h6>{props.name}</h6>
       </div>
     </div>
   );
