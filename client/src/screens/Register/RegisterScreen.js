@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
+import Loader from "../../components/Loader";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
@@ -22,6 +23,7 @@ export default function RegisterScreen() {
   const [imageText, setImageText] = useState("Upload profile image");
   const [imagePreview, setImagePreview] = useState(userDefault);
   const [imageUrl, setImageUrl] = useState(null);
+  const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -58,6 +60,7 @@ export default function RegisterScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
+          setLoader(false);
           history.push("/");
         }
       })
@@ -66,6 +69,7 @@ export default function RegisterScreen() {
 
   const register = (e) => {
     e.preventDefault();
+    setLoader(true);
     fetch("/checkEmail", {
       method: "post",
       headers: {
@@ -113,64 +117,67 @@ export default function RegisterScreen() {
   };
 
   return (
-    <div className="container auth">
-      <div className="row">
-        <h4>
-          Register with <span>Meet Your Team</span>
-        </h4>
-        <div className="col s12">
-          <img
-            className="register-pic responsive-img"
-            src={imagePreview}
-            alt="Profile pic"
-          ></img>
-        </div>
-        <div className="col s12 center">
-          <input
-            type="file"
-            id="file"
-            onChange={(e) => setProfileImage(e.target.files[0])}
-          />
-          <label
-            htmlFor="file"
-            className="waves-effect btn"
-            style={{ marginTop: "0" }}
-          >
-            {imageText}
-          </label>
-        </div>
-        <form className="col s12" onSubmit={(e) => register(e)}>
-          <div className="row">
-            <InputField type={"text"} label={"Name"} changer={setName} />
-            <InputField type={"email"} label={"Email"} changer={setEmail} />
-            <InputField
-              type={showPassword}
-              label={"Password"}
-              changer={setPasword}
-            >
-              <button
-                className="btn-floating transparent icon-btn"
-                type="button"
-                onClick={togglePassword}
-              >
-                <i className="material-icons black-text">
-                  {showPassword === "password"
-                    ? "visibility_off"
-                    : "visibility"}
-                </i>
-              </button>
-            </InputField>
-            <div className="col s3">
-              <button className="btn" type="submit">
-                Register
-              </button>
-            </div>
-            <div className="col m8 s12 link">
-              <Link to="/login">Already have an account?</Link>
-            </div>
+    <>
+      {loader && <Loader />}
+      <div className="container auth">
+        <div className="row">
+          <h4>
+            Register with <span>Meet Your Team</span>
+          </h4>
+          <div className="col s12">
+            <img
+              className="register-pic responsive-img"
+              src={imagePreview}
+              alt="Profile pic"
+            ></img>
           </div>
-        </form>
+          <div className="col s12 center">
+            <input
+              type="file"
+              id="file"
+              onChange={(e) => setProfileImage(e.target.files[0])}
+            />
+            <label
+              htmlFor="file"
+              className="waves-effect btn"
+              style={{ marginTop: "0" }}
+            >
+              {imageText}
+            </label>
+          </div>
+          <form className="col s12" onSubmit={(e) => register(e)}>
+            <div className="row">
+              <InputField type={"text"} label={"Name"} changer={setName} />
+              <InputField type={"email"} label={"Email"} changer={setEmail} />
+              <InputField
+                type={showPassword}
+                label={"Password"}
+                changer={setPasword}
+              >
+                <button
+                  className="btn-floating transparent icon-btn"
+                  type="button"
+                  onClick={togglePassword}
+                >
+                  <i className="material-icons black-text">
+                    {showPassword === "password"
+                      ? "visibility_off"
+                      : "visibility"}
+                  </i>
+                </button>
+              </InputField>
+              <div className="col s3">
+                <button className="btn" type="submit">
+                  Register
+                </button>
+              </div>
+              <div className="col m8 s12 link">
+                <Link to="/login">Already have an account?</Link>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

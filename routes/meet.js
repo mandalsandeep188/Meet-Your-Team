@@ -14,7 +14,7 @@ router.get("/startmeet", requireLogin, (req, res) => {
 
 router.get("/meeting/:meetId", requireLogin, (req, res) => {
   if (meetingRooms.has(req.params.meetId)) res.json({ user: req.user });
-  else res.json({ error: "Invalid meeting link" });
+  else res.json({ meetError: "Invalid meeting link" });
 });
 
 module.exports = router;

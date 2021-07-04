@@ -30,7 +30,7 @@ export default function Sidebar(props) {
 
   return (
     <div
-      className="sidebar col s12 m3 white"
+      className="sidebar col s12 m12 l3 white"
       style={{ display: props.toShow === "close" ? "none" : "block" }}
     >
       <div className="row" style={{ margin: "0px", padding: "0px" }}>
@@ -49,6 +49,7 @@ export default function Sidebar(props) {
         </div>
       </div>
       {props.toShow === "users" ? (
+        // users
         <ul className="collection">
           {props.meetingUsers.map((user) => {
             return (
@@ -64,6 +65,7 @@ export default function Sidebar(props) {
           })}
         </ul>
       ) : (
+        // chats
         <>
           <div className="chats">
             {props.meetingChats.map((message, index) => {

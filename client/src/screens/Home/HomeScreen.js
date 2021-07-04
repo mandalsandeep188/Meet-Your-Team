@@ -1,8 +1,23 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import "./HomeScreen.css";
-import { Link } from "react-router-dom";
+import M from "materialize-css";
+import { useHistory } from "react-router";
 
 export default function HomeScreen() {
+  const user = useSelector((state) => state.userReducer);
+  const history = useHistory();
+  const startMeet = () => {
+    if (user) {
+      history.push("/startMeeting");
+    } else {
+      M.toast({
+        html: "You must be logged in!",
+        classes: "#c62828 red darken-3",
+      });
+      history.push("/login");
+    }
+  };
   return (
     <div>
       <div className="row welcome">
@@ -15,12 +30,19 @@ export default function HomeScreen() {
             Reach your team of work or school across the world <br />
             to interact with them in a easy and effective way.
           </p>
-          <Link to="/startMeeting" className="btn" style={{ margin: "10px 0" }}>
+          <button
+            className="btn"
+            style={{ margin: "10px 0" }}
+            onClick={startMeet}
+          >
             Start Meeting
-          </Link>
+          </button>
         </div>
         <div className="col s12 m12 l5">
           <img className="responsive-img" src="meeting.jpg" alt="meeting" />
+        </div>
+        <div className="people hide-on-med-and-down">
+          <img src="people.png" alt="people" className="responsive-img" />
         </div>
       </div>
     </div>

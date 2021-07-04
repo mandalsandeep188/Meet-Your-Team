@@ -9,6 +9,7 @@ import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
 import Video from "../../components/Video";
+import Loader from "../../components/Loader";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
@@ -23,6 +24,7 @@ export default function MeetingScreen() {
   const [audioStatus, setAudioStatus] = useState(
     streamState ? streamState.audioStatus : "mic"
   );
+  const [loader, setLoader] = useState(true);
   const streams = useRef({});
   const [videoSrc, setVideoSrc] = useState({});
   const [meetingUsers, setMeetingUsers] = useState([]);
@@ -42,6 +44,9 @@ export default function MeetingScreen() {
       .then((data) => {
         if (data.error) {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
+          history.replace("/login");
+        } else if (data.meetError) {
+          M.toast({ html: data.meetError, classes: "#c62828 red darken-3" });
           history.replace("/");
         } else {
           startStream();
@@ -71,7 +76,7 @@ export default function MeetingScreen() {
     if (peer) {
       // peer open event
       peer.on("open", (id) => {
-        console.log("hello", id, user);
+        console.log("hello", id);
         socket.emit("joinMeeting", { id, meetId, user });
       });
 
@@ -84,9 +89,7 @@ export default function MeetingScreen() {
 
       // user connected
       socket.on("user-connected", (data) => {
-        if (data.error) {
-          M.toast({ html: data.error });
-        } else {
+        if (!data.error) {
           console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
           setMeetingUsers(data.meetingUsers);
@@ -190,6 +193,7 @@ export default function MeetingScreen() {
 
   // add video stream to UI
   const addVideoStream = (stream, userId) => {
+    setLoader(true);
     setVideoSrc({ ...streams.current, [userId]: stream });
     streams.current = { ...streams.current, [userId]: stream };
   };
@@ -239,94 +243,103 @@ export default function MeetingScreen() {
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
 
-  useEffect(() => {
-    console.log("State changed", videoSrc);
-  }, [videoSrc]);
-
   return (
-    <div className="row meet-screen">
-      <div
-        className={`col ${
-          sideBar === "close" ? "m12" : "m9"
-        } s12 scale-transition`}
-        style={{ margin: "0px", padding: "0px", position: "relative" }}
-      >
-        <Carousel
-          autoPlay={false}
-          dynamicHeight={true}
-          showThumbs={false}
-          showIndicators={false}
+    <>
+      {loader && <Loader />}
+      <div className="row meet-screen">
+        <div
+          className={`col ${
+            sideBar === "close" ? "l12" : "l9"
+          } m12 s12 scale-transition`}
+          style={{ margin: "0px", padding: "0px", position: "relative" }}
         >
-          {/* Adjusting videos in grid */}
-          {[...Array(Math.ceil(Object.entries(videoSrc).length / 2))].map(
-            (e, index) => {
-              return (
-                <div
-                  key={index}
-                  className="video-grid"
-                  style={{
-                    gridTemplateColumns: `repeat(${
-                      2 * index + 1 < Object.entries(videoSrc).length
-                        ? "2"
-                        : "1"
-                    }, 1fr)`,
-                  }}
-                >
-                  <Video
-                    srcObject={Object.entries(videoSrc)[2 * index][1]}
-                    muted={
-                      Object.entries(videoSrc)[2 * index][0] === "myStream"
-                    }
-                    name={userNames[2 * index]}
-                  />
-                  {2 * index + 1 < Object.entries(videoSrc).length && (
+          {/* Videos of users in the grid carousel */}
+          <Carousel
+            autoPlay={false}
+            dynamicHeight={true}
+            showThumbs={false}
+            showIndicators={false}
+          >
+            {/* Adjusting videos in grid */}
+            {[...Array(Math.ceil(Object.entries(videoSrc).length / 2))].map(
+              (e, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="video-grid"
+                    style={{
+                      gridTemplateColumns: `repeat(${
+                        2 * index + 1 < Object.entries(videoSrc).length
+                          ? "2"
+                          : "1"
+                      }, 1fr)`,
+                    }}
+                  >
                     <Video
-                      srcObject={Object.entries(videoSrc)[2 * index + 1][1]}
-                      name={userNames[2 * index + 1]}
+                      srcObject={Object.entries(videoSrc)[2 * index][1]}
+                      muted={
+                        Object.entries(videoSrc)[2 * index][0] === "myStream"
+                      }
+                      loader={setLoader}
+                      name={userNames[2 * index]}
+                      fullHeight={
+                        2 * index + 1 === Object.entries(videoSrc).length
+                      }
                     />
-                  )}
-                </div>
-              );
-            }
-          )}
-        </Carousel>
-        <div className="video-controls">
-          <button className="btn-floating btn red" onClick={toggleVideo}>
-            <i className="material-icons">{videoStatus}</i>
-          </button>
-          <button className="btn-floating btn red" onClick={toggleAudio}>
-            <i className="material-icons">{audioStatus}</i>
-          </button>
-          <button
-            className="btn-floating btn red"
-            onClick={() => {
-              history.replace("/");
-            }}
-          >
-            <i className="material-icons">call_end</i>
-          </button>
-          <button
-            className="btn-floating btn"
-            onClick={() => toggleSideBar("users")}
-          >
-            <i className="material-icons">people</i>
-          </button>
-          <button
-            className="btn-floating btn"
-            onClick={() => toggleSideBar("chats")}
-          >
-            <i className="material-icons">chat</i>
-          </button>
+                    {2 * index + 1 < Object.entries(videoSrc).length && (
+                      <Video
+                        srcObject={Object.entries(videoSrc)[2 * index + 1][1]}
+                        name={userNames[2 * index + 1]}
+                        loader={setLoader}
+                      />
+                    )}
+                  </div>
+                );
+              }
+            )}
+          </Carousel>
+
+          {/* Video controls */}
+          <div className="video-controls">
+            <button className="btn-floating btn red" onClick={toggleVideo}>
+              <i className="material-icons">{videoStatus}</i>
+            </button>
+            <button className="btn-floating btn red" onClick={toggleAudio}>
+              <i className="material-icons">{audioStatus}</i>
+            </button>
+            <button
+              className="btn-floating btn red"
+              onClick={() => {
+                history.replace("/");
+              }}
+            >
+              <i className="material-icons">call_end</i>
+            </button>
+            <button
+              className="btn-floating btn"
+              onClick={() => toggleSideBar("users")}
+            >
+              <i className="material-icons">people</i>
+            </button>
+            <button
+              className="btn-floating btn"
+              onClick={() => toggleSideBar("chats")}
+            >
+              <i className="material-icons">chat</i>
+            </button>
+          </div>
         </div>
+
+        {/* To show chats and users */}
+        <Sidebar
+          toShow={sideBar}
+          meetingUsers={meetingUsers}
+          meetingChats={meetingChats}
+          toggler={setSideBar}
+          meetId={meetId}
+          receive={setMeetingChats}
+        />
       </div>
-      <Sidebar
-        toShow={sideBar}
-        meetingUsers={meetingUsers}
-        meetingChats={meetingChats}
-        toggler={setSideBar}
-        meetId={meetId}
-        receive={setMeetingChats}
-      />
-    </div>
+    </>
   );
 }

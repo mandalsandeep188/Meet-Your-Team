@@ -13,6 +13,7 @@
   display: grid;
   background-color: #1b1919;
   min-height: 100vh;
+  padding-bottom: 45px;
 }
 
 .video-grid .video {
