@@ -19,10 +19,10 @@ export default function MeetingScreen() {
   const [peer, setPeer] = useState();
   const history = useHistory();
   const [videoStatus, setVideoStatus] = useState(
-    streamState ? streamState.videoStatus : "videocam"
+    streamState ? streamState.videoStatus : "videocam_off"
   );
   const [audioStatus, setAudioStatus] = useState(
-    streamState ? streamState.audioStatus : "mic"
+    streamState ? streamState.audioStatus : "mic_off"
   );
   const [loader, setLoader] = useState(true);
   const streams = useRef({});
@@ -30,8 +30,8 @@ export default function MeetingScreen() {
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
   const [sideBar, setSideBar] = useState("close");
-  const names = useRef(["You"]);
-  const [userNames, setUserNames] = useState(["You"]);
+  const meetUsers = useRef({});
+  const [users, setUsers] = useState({});
 
   useEffect(() => {
     // Authenticate user
@@ -77,6 +77,7 @@ export default function MeetingScreen() {
       // peer open event
       peer.on("open", (id) => {
         console.log("hello", id);
+        addUser(user._id, user);
         socket.emit("joinMeeting", { id, meetId, user });
       });
 
@@ -93,12 +94,12 @@ export default function MeetingScreen() {
           console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
           setMeetingUsers(data.meetingUsers);
-          setUserNames([...names.current, data.user.name]);
-          names.current.push(data.user.name);
+          addUser(data.userId, data.user);
           callUser(user._id, data.userId, user);
         }
       });
 
+      // geting state of meeting joined
       socket.on("joined-meeting", (meetingUsers, meetingChats) => {
         setMeetingUsers(meetingUsers);
         setMeetingChats(meetingChats);
@@ -109,12 +110,19 @@ export default function MeetingScreen() {
         console.log("socket disconnected", user.name);
         setMeetingUsers(meetingUsers);
         if (userId) {
-          M.toast({ html: `${user.name} left the meeting` });
+          // removing video of user left
           if (streams.current[userId]) {
             let { [userId]: _, ...videoStreams } = streams.current;
             setVideoSrc(videoStreams);
             streams.current = videoStreams;
           }
+          // removing user from user list
+          if (meetUsers.current[userId]) {
+            let { [userId]: _, ...users } = meetUsers.current;
+            setUsers(users);
+            meetUsers.current = users;
+          }
+          M.toast({ html: `${user.name} left the meeting` });
         }
       });
     }
@@ -150,7 +158,7 @@ export default function MeetingScreen() {
         setSendingStream(streams);
         console.log("calling...", userId);
         const call = peer.call(userId, stream, {
-          metadata: { userId: myId, name: user.name },
+          metadata: { userId: myId, user },
         });
         let id;
         call.on("stream", (userVideoStream) => {
@@ -183,8 +191,7 @@ export default function MeetingScreen() {
           if (id != userVideoStream.id) {
             console.log("Getting caller's stream....");
             id = userVideoStream.id;
-            setUserNames([...names.current, call.metadata.name]);
-            names.current.push(call.metadata.name);
+            addUser(call.metadata.userId, call.metadata.user);
             addVideoStream(userVideoStream, call.metadata.userId);
           }
         });
@@ -196,6 +203,12 @@ export default function MeetingScreen() {
     setLoader(true);
     setVideoSrc({ ...streams.current, [userId]: stream });
     streams.current = { ...streams.current, [userId]: stream };
+  };
+
+  // add user to be shown with video
+  const addUser = (userId, user) => {
+    setUsers({ ...meetUsers.current, [userId]: user });
+    meetUsers.current = { ...meetUsers.current, [userId]: user };
   };
 
   // video controls
@@ -281,7 +294,7 @@ export default function MeetingScreen() {
                         Object.entries(videoSrc)[2 * index][0] === "myStream"
                       }
                       loader={setLoader}
-                      name={userNames[2 * index]}
+                      user={Object.entries(users)[2 * index][1]}
                       fullHeight={
                         2 * index + 1 === Object.entries(videoSrc).length
                       }
@@ -289,7 +302,7 @@ export default function MeetingScreen() {
                     {2 * index + 1 < Object.entries(videoSrc).length && (
                       <Video
                         srcObject={Object.entries(videoSrc)[2 * index + 1][1]}
-                        name={userNames[2 * index + 1]}
+                        user={Object.entries(users)[2 * index + 1][1]}
                         loader={setLoader}
                       />
                     )}

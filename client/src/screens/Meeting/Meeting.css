@@ -72,19 +72,27 @@
   animation: slide 0.2s forwards;
 }
 
-.user-name {
+.user {
+  display: flex;
+  justify-content: start;
+  align-items: center;
   position: absolute;
-  bottom: 2%;
+  bottom: 0;
   left: 0;
   width: 100%;
   color: white;
 }
 
-.meet-user img {
-  width: 20% !important;
-  display: block;
-  margin: auto;
-  margin-top: 10%;
+.user img {
+  width: 7% !important;
+  object-fit: cover;
+  padding: 10px;
+}
+
+.user h6 {
+  background-color: #1b1919;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 #message {
@@ -157,5 +165,8 @@
   }
   .video-grid {
     grid-template-columns: repeat(1, 1fr) !important;
+  }
+  .user img {
+    width: 13% !important;
   }
 }
