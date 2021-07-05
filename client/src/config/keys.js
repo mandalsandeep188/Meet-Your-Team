@@ -1,10 +1,6 @@
 // config keys based on production or dev environment
-let config;
 if (process.env.NODE_ENV === "production") {
-  const prodConfig = require("./prod");
-  config = prodConfig;
+  module.exports = require("./prod");
 } else {
-  const devConfig = require("./dev");
-  config = devConfig;
+  module.exports = require("./dev");
 }
-export default config;
