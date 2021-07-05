@@ -7,7 +7,7 @@ import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
-import { URL } from "../../../../config/keys";
+import { URL } from "../../config/keys";
 
 export const socket = io(URL);
 

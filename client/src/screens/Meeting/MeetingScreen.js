@@ -10,7 +10,7 @@ import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
 import Video from "../../components/Video";
 import Loader from "../../components/Loader";
-import { PEER_PORT } from "../../../../config/keys";
+import { PEER_PORT } from "../../config/keys";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
