@@ -1,4 +1,4 @@
 export default {
-  PEER_PORT: process.env.PEER_PORT,
+  PEER_PORT: 443,
   URL: process.env.URL,
 };
