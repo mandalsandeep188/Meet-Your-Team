@@ -14,6 +14,7 @@ import config from "../../config/keys";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
+  const user = useRef(JSON.parse(localStorage.getItem("user")));
   const { meetId } = useParams();
   const [stream, setStream] = useState(null);
   const [sendingStream, setSendingStream] = useState([]);
@@ -48,7 +49,7 @@ export default function MeetingScreen() {
           M.toast({ html: data.meetError, classes: "#c62828 red darken-3" });
           history.replace("/");
         } else {
-          startStream(data.user);
+          startStream();
         }
       });
 
@@ -60,10 +61,9 @@ export default function MeetingScreen() {
 
   useEffect(() => {
     // Set peer by user id
-    let user = JSON.parse(localStorage.getItem("user"));
-    if (!peer && user) {
+    if (!peer && user.current) {
       setPeer(
-        new Peer(user._id, {
+        new Peer(user.current._id, {
           host: "/",
           path: "/peer",
           port: config.PEER_PORT,
@@ -76,10 +76,13 @@ export default function MeetingScreen() {
       // peer open event
       peer.on("open", (id) => {
         console.log("hello", id);
-        socket.emit("joinMeeting", { id, meetId, user });
+        socket.emit("joinMeeting", { id, meetId, user: user.current });
       });
 
-      peer.on("error", (err) => console.log(err));
+      peer.on("error", (err) => {
+        console.log(err);
+        history.replace("/");
+      });
 
       // on call
       peer.on("call", (call) => {
@@ -92,7 +95,7 @@ export default function MeetingScreen() {
           console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
           setMeetingUsers(data.meetingUsers);
-          callUser(user._id, data.userId, user, data.user);
+          callUser(user.current._id, data.userId, user.current, data.user);
         }
       });
 
@@ -120,7 +123,7 @@ export default function MeetingScreen() {
   }, [peer]);
 
   // start self stream
-  const startStream = (user) => {
+  const startStream = () => {
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -130,7 +133,7 @@ export default function MeetingScreen() {
         stream.getAudioTracks()[0].enabled = audioStatus === "mic";
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
         setStream(stream);
-        addVideoStream(stream, "myStream", user);
+        addVideoStream(stream, "myStream", user.current);
       });
   };
 
