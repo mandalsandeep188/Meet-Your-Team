@@ -56,6 +56,7 @@ const {
 
 // Socket IO related events
 io.on("connection", (client) => {
+  console.log("connected to socket io");
   // new meeting created event
   client.on("newMeeting", () => newMeeting(client));
 
