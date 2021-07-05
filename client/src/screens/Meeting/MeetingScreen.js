@@ -31,8 +31,6 @@ export default function MeetingScreen() {
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
   const [sideBar, setSideBar] = useState("close");
-  const meetUsers = useRef({});
-  const [users, setUsers] = useState({});
 
   useEffect(() => {
     // Authenticate user
@@ -50,7 +48,7 @@ export default function MeetingScreen() {
           M.toast({ html: data.meetError, classes: "#c62828 red darken-3" });
           history.replace("/");
         } else {
-          startStream();
+          startStream(data.user);
         }
       });
 
@@ -78,7 +76,6 @@ export default function MeetingScreen() {
       // peer open event
       peer.on("open", (id) => {
         console.log("hello", id);
-        addUser(user._id, user);
         socket.emit("joinMeeting", { id, meetId, user });
       });
 
@@ -95,8 +92,7 @@ export default function MeetingScreen() {
           console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
           setMeetingUsers(data.meetingUsers);
-          addUser(data.userId, data.user);
-          callUser(user._id, data.userId, user);
+          callUser(user._id, data.userId, user, data.user);
         }
       });
 
@@ -117,12 +113,6 @@ export default function MeetingScreen() {
             setVideoSrc(videoStreams);
             streams.current = videoStreams;
           }
-          // removing user from user list
-          if (meetUsers.current[userId]) {
-            let { [userId]: _, ...users } = meetUsers.current;
-            setUsers(users);
-            meetUsers.current = users;
-          }
           M.toast({ html: `${user.name} left the meeting` });
         }
       });
@@ -130,7 +120,7 @@ export default function MeetingScreen() {
   }, [peer]);
 
   // start self stream
-  const startStream = () => {
+  const startStream = (user) => {
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -140,12 +130,12 @@ export default function MeetingScreen() {
         stream.getAudioTracks()[0].enabled = audioStatus === "mic";
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
         setStream(stream);
-        addVideoStream(stream, "myStream");
+        addVideoStream(stream, "myStream", user);
       });
   };
 
   // call new user
-  const callUser = (myId, userId, user) => {
+  const callUser = (myId, userId, me, user) => {
     navigator.mediaDevices
       .getUserMedia({
         video: true,
@@ -159,14 +149,14 @@ export default function MeetingScreen() {
         setSendingStream(streams);
         console.log("calling...", userId);
         const call = peer.call(userId, stream, {
-          metadata: { userId: myId, user },
+          metadata: { userId: myId, user: me },
         });
         let id;
         call.on("stream", (userVideoStream) => {
           if (id != userVideoStream.id) {
             console.log("Getting reciever stream...");
             id = userVideoStream.id;
-            addVideoStream(userVideoStream, userId);
+            addVideoStream(userVideoStream, userId, user);
           }
         });
       });
@@ -192,24 +182,21 @@ export default function MeetingScreen() {
           if (id != userVideoStream.id) {
             console.log("Getting caller's stream....");
             id = userVideoStream.id;
-            addUser(call.metadata.userId, call.metadata.user);
-            addVideoStream(userVideoStream, call.metadata.userId);
+            addVideoStream(
+              userVideoStream,
+              call.metadata.userId,
+              call.metadata.user
+            );
           }
         });
       });
   };
 
   // add video stream to UI
-  const addVideoStream = (stream, userId) => {
+  const addVideoStream = (stream, userId, user) => {
     setLoader(true);
-    setVideoSrc({ ...streams.current, [userId]: stream });
-    streams.current = { ...streams.current, [userId]: stream };
-  };
-
-  // add user to be shown with video
-  const addUser = (userId, user) => {
-    setUsers({ ...meetUsers.current, [userId]: user });
-    meetUsers.current = { ...meetUsers.current, [userId]: user };
+    setVideoSrc({ ...streams.current, [userId]: [stream, user] });
+    streams.current = { ...streams.current, [userId]: [stream, user] };
   };
 
   // video controls
@@ -257,6 +244,8 @@ export default function MeetingScreen() {
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
 
+  console.log(Object.entries(videoSrc));
+
   return (
     <>
       {loader && <Loader />}
@@ -290,20 +279,22 @@ export default function MeetingScreen() {
                     }}
                   >
                     <Video
-                      srcObject={Object.entries(videoSrc)[2 * index][1]}
+                      srcObject={Object.entries(videoSrc)[2 * index][1][0]}
                       muted={
                         Object.entries(videoSrc)[2 * index][0] === "myStream"
                       }
                       loader={setLoader}
-                      user={Object.entries(users)[2 * index][1]}
+                      user={Object.entries(videoSrc)[2 * index][1][1]}
                       fullHeight={
                         2 * index + 1 === Object.entries(videoSrc).length
                       }
                     />
                     {2 * index + 1 < Object.entries(videoSrc).length && (
                       <Video
-                        srcObject={Object.entries(videoSrc)[2 * index + 1][1]}
-                        user={Object.entries(users)[2 * index + 1][1]}
+                        srcObject={
+                          Object.entries(videoSrc)[2 * index + 1][1][0]
+                        }
+                        user={Object.entries(videoSrc)[2 * index + 1][1][1]}
                         loader={setLoader}
                       />
                     )}
