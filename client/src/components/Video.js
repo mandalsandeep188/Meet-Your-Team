@@ -19,8 +19,13 @@ export default function Video(props) {
           props.loader(false);
         }}
       />
-      <div className="user-name">
-        <h6>{props.name}</h6>
+      <div className="user">
+        <img
+          className="responsive-img circle"
+          src={props.user.profileImage}
+          alt={props.user.name}
+        />
+        <h6>{props.user.name}</h6>
       </div>
     </div>
   );

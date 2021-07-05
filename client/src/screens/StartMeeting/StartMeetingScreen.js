@@ -6,7 +6,6 @@ import InputField from "../../components/InputField";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
-import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 
 export const socket = io("http://localhost:5000");
@@ -35,7 +34,6 @@ export default function StartMeetingScreen() {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
           history.replace("/login");
         } else {
-          dispatch(loginUser(user));
           startStream();
         }
       });
