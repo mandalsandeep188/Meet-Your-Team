@@ -7,8 +7,9 @@ import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
+import { URL } from "../../../../config/keys";
 
-export const socket = io("https://meetyourteam.herokuapp.com/");
+export const socket = io(URL);
 
 export default function StartMeetingScreen() {
   const user = useSelector((state) => state.userReducer);
@@ -98,7 +99,7 @@ export default function StartMeetingScreen() {
     socket.on("newMeeting", (data) => {
       history.push(`/meet/${data.meetId}`);
       M.toast({
-        html: `Meet link: https://meetyourteam.herokuapp.com/meet/${data.meetId}`,
+        html: `Meet link: ${URL}meet/${data.meetId}`,
       });
     });
   };

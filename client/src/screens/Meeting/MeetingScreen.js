@@ -10,6 +10,7 @@ import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
 import Video from "../../components/Video";
 import Loader from "../../components/Loader";
+import { PEER_PORT } from "../../../../config/keys";
 
 export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
@@ -67,7 +68,7 @@ export default function MeetingScreen() {
         new Peer(user._id, {
           host: "/",
           path: "/peer",
-          port: 443,
+          port: PEER_PORT,
         })
       );
     }
