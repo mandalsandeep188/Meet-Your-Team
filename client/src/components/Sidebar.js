@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Chats from "./Chats";
 import { socket } from "../screens/StartMeeting/StartMeetingScreen";
 
 export default function Sidebar(props) {
@@ -7,25 +8,48 @@ export default function Sidebar(props) {
   const send = useRef();
 
   useEffect(() => {
-    socket.on("receiveMessage", (meetingChats) => {
-      props.receive(meetingChats);
-      let objDiv = document.getElementsByClassName("chats")[0];
-      objDiv.scrollTop = objDiv.scrollHeight;
+    socket.on("receive-message", () => {
+      fetch("/receiveMessage", {
+        method: "post",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          conversationId: props.meetId,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          props.receive(data.chats);
+          let objDiv = document.getElementsByClassName("chats")[0];
+          if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
+        });
     });
   }, []);
 
   // send chat message
   const sendMessage = () => {
     const message = msg.trim();
-    if (message.length != 0)
-      socket.emit("sendMessage", {
-        msg: message,
-        user: user.current,
-        meetId: props.meetId,
-        time: new Date().toLocaleTimeString(),
-      });
-    setMsg("");
-    send.current.focus();
+    if (message.length != 0) {
+      fetch(`/sendMessage`, {
+        method: "post",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          msg: message,
+          conversationId: props.meetId,
+        }),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          socket.emit("sent-message", props.meetId);
+          setMsg("");
+          send.current.focus();
+        });
+    }
   };
 
   return (
@@ -66,55 +90,14 @@ export default function Sidebar(props) {
         </ul>
       ) : (
         // chats
-        <>
-          <div className="chats">
-            {props.meetingChats.map((message, index) => {
-              return (
-                <div
-                  className={`message ${
-                    message.user._id === user.current._id
-                      ? "rightmsg"
-                      : "leftmsg"
-                  }`}
-                  key={index}
-                >
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <span style={{ fontWeight: "bold", marginRight: "10px" }}>
-                      {message.user.name}
-                    </span>
-                    <span style={{ fontSize: "10px" }}>{message.time}</span>
-                  </div>
-                  <span style={{ fontSize: "14px" }}>{message.text}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="send">
-            <div className="input-field">
-              <input
-                id="message"
-                ref={send}
-                className="validate"
-                value={msg}
-                placeholder="Send a message..."
-                onChange={(e) => {
-                  setMsg(e.target.value);
-                }}
-              />
-            </div>
-            <div>
-              <button
-                className="btn-flat btn-large transparent"
-                style={{ marginLeft: "10px" }}
-                onClick={sendMessage}
-              >
-                <i className="material-icons teal-text">send</i>
-              </button>
-            </div>
-          </div>
-        </>
+        <Chats
+          setMsg={setMsg}
+          sendMessage={sendMessage}
+          chats={props.meetingChats}
+          user={user}
+          msg={msg}
+          send={send}
+        />
       )}
     </div>
   );

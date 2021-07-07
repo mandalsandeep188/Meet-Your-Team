@@ -38,9 +38,9 @@ export default function LoginScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
-          setLoader(false);
           history.push("/");
         }
+        setLoader(false);
       })
       .catch((err) => {
         console.log(err);
@@ -55,7 +55,7 @@ export default function LoginScreen() {
   return (
     <>
       {loader && <Loader />}
-      <div className="container auth" style={{ marginTop: "90px" }}>
+      <div className="container card auth" style={{ marginTop: "90px" }}>
         <div className="row">
           <h4 className="col s12">
             Login to <span>Meet Your Team</span>

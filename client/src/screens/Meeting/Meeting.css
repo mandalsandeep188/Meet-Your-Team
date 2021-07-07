@@ -70,6 +70,7 @@
   padding: 10px !important;
   height: 100vh;
   animation: slide 0.2s forwards;
+  overflow-y: auto;
 }
 
 .user {

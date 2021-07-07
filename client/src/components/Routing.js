@@ -7,6 +7,7 @@ import RegisterScreen from "../screens/Register/RegisterScreen";
 import { useDispatch } from "react-redux";
 import StartMeetingScreen from "../screens/StartMeeting/StartMeetingScreen";
 import MeetingScreen from "../screens/Meeting/MeetingScreen";
+import ConversationScreen from "../screens/Conversation/ConversationScreen";
 import { loginUser } from "../redux/actions/userActions";
 
 export default function Routing() {
@@ -33,6 +34,12 @@ export default function Routing() {
       </Route>
       <Route path="/meet/:meetId">
         <MeetingScreen />
+      </Route>
+      <Route path="/conversation/:id">
+        <ConversationScreen />
+      </Route>
+      <Route path="/conversations">
+        <ConversationScreen />
       </Route>
       <Route path="/">
         <Navbar />

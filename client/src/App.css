@@ -2,6 +2,7 @@
 
 * {
   scroll-behavior: smooth;
+  text-overflow: ellipsis;
 }
 
 body {
@@ -23,10 +24,12 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar:hover {
-  width: 6px;
+  width: 8px;
+  height: 8px;
   transition: width 2s ease-in-out;
 }
 
@@ -46,6 +49,12 @@ body {
   top: 50%;
   left: 50%;
   z-index: 3;
+}
+
+.dropdown-content li > a,
+.dropdown-content li > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media screen and (max-width: 992px) {

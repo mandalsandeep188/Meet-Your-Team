@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/actions/userActions";
 import "./Navbar.css";
@@ -8,6 +8,7 @@ import M from "materialize-css";
 export default function Navbar() {
   const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const logout = () => {
     dispatch(logoutUser());
@@ -16,6 +17,7 @@ export default function Navbar() {
       html: "Logged out successfully",
       classes: "#c62828 red darken-3",
     });
+    history.replace("/");
   };
 
   useEffect(() => {

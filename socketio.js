@@ -1,77 +1,146 @@
 const { io } = require("./app");
 const { makeId } = require("./utils/uuid");
+const mongoose = require("mongoose");
 
-const meetingRooms = new Set();
+// Conversation Model
+const Conversation = mongoose.model("Conversation");
+
 const meetingUsers = {};
-const meetingChats = {};
+
+//=========================== Meeting related ====================
 
 // Create new meeting
-const newMeeting = (client) => {
-  const meetId = makeId(8);
-  meetingRooms.add(meetId);
-  meetingUsers[meetId] = [];
-  meetingChats[meetId] = [];
-  client.emit("newMeeting", {
-    meetId,
+const newMeeting = (client, name) => {
+  const conversationId = makeId(8);
+  const conversation = new Conversation({
+    name,
+    conversationId,
+  });
+  meetingUsers[conversationId] = [];
+  conversation.save().then(() => {
+    client.emit("newMeeting", {
+      meetId: conversationId,
+    });
   });
 };
 
 // Join meeting with meetId
-const joinMeeting = (client, userId, meetId, user) => {
-  if (meetId && meetingRooms.has(meetId)) {
-    meetingUsers[meetId].push(user);
-    client.join(meetId);
-    if (userId && user) {
-      console.log("join meeting", userId, user.name);
-      client.emit("joined-meeting", meetingUsers[meetId], meetingChats[meetId]);
-      client.broadcast.to(meetId).emit("user-connected", {
-        userId,
-        user,
-        meetingUsers: meetingUsers[meetId],
-      });
+const joinMeeting = (client, userId, conversationId, user) => {
+  // join this conversation if exist
+  Conversation.findOne({ conversationId }).then((conversation) => {
+    if (!conversation) {
+      client.emit("user-connected", { error: "Invalid meeting link" });
+    } else {
+      // socket joining
+      if (meetingUsers[conversationId]) meetingUsers[conversationId].push(user);
+      else meetingUsers[conversationId] = [user];
+      client.join(conversationId);
+
+      if (userId && user) {
+        // if user already joined before just join otherwise save in database
+        console.log("join meeting", userId, user.name);
+        if (conversation.members.indexOf(userId) === -1) {
+          Conversation.findOneAndUpdate(
+            { conversationId },
+            {
+              $push: { members: userId },
+            },
+            { new: true }
+          ).then(() => {
+            // inform client about joined user
+            console.log("updated");
+            client.emit("joined-meeting", meetingUsers[conversationId]);
+            client.broadcast.to(conversationId).emit("user-connected", {
+              userId,
+              user,
+              meetingUsers: meetingUsers[conversationId],
+            });
+          });
+        } else {
+          // inform client about joined user
+          client.emit("joined-meeting", meetingUsers[conversationId]);
+          client.broadcast.to(conversationId).emit("user-connected", {
+            userId,
+            user,
+            meetingUsers: meetingUsers[conversationId],
+          });
+        }
+      }
     }
-  } else {
-    client.emit("user-connected", { error: "Invalid meeting link" });
-  }
+  });
 };
 
 // leave meeting
 const leaveMeeting = (client, data) => {
-  if (data.meetId && meetingRooms.has(data.meetId)) {
-    if (meetingUsers[data.meetId]) {
-      meetingUsers[data.meetId].splice(
-        meetingUsers[data.meetId].indexOf(data.user),
-        1
-      );
-      client.broadcast
-        .to(data.meetId)
-        .emit(
-          "user-disconnected",
-          data.id,
-          data.user,
-          meetingUsers[data.meetId]
+  Conversation.findOne({ conversationId: data.meetId }).then((conversation) => {
+    if (conversation) {
+      if (meetingUsers[data.meetId]) {
+        meetingUsers[data.meetId].splice(
+          meetingUsers[data.meetId].indexOf(data.user),
+          1
         );
+        client.broadcast
+          .to(data.meetId)
+          .emit(
+            "user-disconnected",
+            data.id,
+            data.user,
+            meetingUsers[data.meetId]
+          );
+      }
     }
-  }
+  });
 };
 
-// chat message sending
-const sendMessage = (text, user, meetId, time) => {
-  if (meetId && meetingRooms.has(meetId)) {
-    meetingChats[meetId].push({
-      text,
-      user,
-      time: time.substring(0, time.lastIndexOf(":")),
+//======================== Conversation related =====================
+
+const newConversation = (client, name) => {
+  const conversationId = makeId(8);
+  const conversation = new Conversation({
+    name,
+    conversationId,
+  });
+  meetingUsers[conversationId] = [];
+  conversation.save().then(() => {
+    client.emit("newConversation", {
+      conversationId,
     });
-    io.sockets.in(meetId).emit("receiveMessage", meetingChats[meetId]);
-  }
+  });
+};
+
+const joinConversation = (client, userId, conversationId, user) => {
+  // join this conversation if exist
+  Conversation.findOne({ conversationId }).then((conversation) => {
+    if (!conversation) {
+      client.emit("user-connected", { error: "Invalid conversation link" });
+    } else {
+      // socket joining
+      client.join(conversationId);
+      console.log("join conversation", userId, user.name, conversationId);
+      if (userId && user) {
+        // if user already joined before just join otherwise save in database
+        if (conversation.members.indexOf(userId) === -1) {
+          Conversation.findOneAndUpdate(
+            { conversationId },
+            {
+              $push: { members: userId },
+            },
+            { new: true }
+          ).then(() => {
+            // inform client about joined user
+            io.sockets.in(conversationId).emit("user-joined", user);
+          });
+        }
+      }
+    }
+  });
 };
 
 module.exports = {
   newMeeting,
+  newConversation,
   joinMeeting,
+  joinConversation,
   leaveMeeting,
-  sendMessage,
-  meetingRooms,
   meetingUsers,
 };

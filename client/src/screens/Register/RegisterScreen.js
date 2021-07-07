@@ -60,9 +60,9 @@ export default function RegisterScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
-          setLoader(false);
           history.push("/");
         }
+        setLoader(false);
       })
       .catch((err) => console.log(err.message));
   };
@@ -119,7 +119,7 @@ export default function RegisterScreen() {
   return (
     <>
       {loader && <Loader />}
-      <div className="container auth">
+      <div className="container card auth">
         <div className="row">
           <h4>
             Register with <span>Meet Your Team</span>

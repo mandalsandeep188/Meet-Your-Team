@@ -2,11 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import "./HomeScreen.css";
 import M from "materialize-css";
-import { useHistory } from "react-router";
+import { useHistory, Link } from "react-router-dom";
 
 export default function HomeScreen() {
   const user = useSelector((state) => state.userReducer);
   const history = useHistory();
+
   const startMeet = () => {
     if (user) {
       history.push("/startMeeting");
@@ -18,10 +19,11 @@ export default function HomeScreen() {
       history.push("/login");
     }
   };
+
   return (
     <div>
       <div className="row welcome">
-        <div className="col s12 m12 l7" style={{ paddingTop: "15px" }}>
+        <div className="col s12 m12 l7">
           <h3>
             Welcome to <span>Meet Your Team</span>
           </h3>
@@ -37,6 +39,13 @@ export default function HomeScreen() {
           >
             Start Meeting
           </button>
+          <Link
+            className="btn green"
+            style={{ margin: "10px 0" }}
+            to="/conversations"
+          >
+            Conversations
+          </Link>
         </div>
         <div className="col s12 m12 l5">
           <img className="responsive-img" src="meeting.jpg" alt="meeting" />

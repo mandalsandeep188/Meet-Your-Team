@@ -36,6 +36,8 @@ require("./db/connection");
 
 // Database models
 require("./db/models/user");
+require("./db/models/conversation");
+require("./db/models/chat");
 
 // Setting up json usage
 app.use(express.json());
@@ -46,19 +48,21 @@ app.use(peerServer);
 // Routes
 app.use(require("./routes/auth"));
 app.use(require("./routes/meet"));
+app.use(require("./routes/conversation"));
 
 const {
   newMeeting,
   joinMeeting,
   leaveMeeting,
-  sendMessage,
+  newConversation,
+  joinConversation,
 } = require("./socketio");
 
 // Socket IO related events
 io.on("connection", (client) => {
-  console.log("connected to socket io");
   // new meeting created event
-  client.on("newMeeting", () => newMeeting(client));
+  client.on("newMeeting", (name) => newMeeting(client, name));
+  client.on("newConversation", (name) => newConversation(client, name));
 
   // user joined event
   client.on("joinMeeting", (data) => {
@@ -68,16 +72,15 @@ io.on("connection", (client) => {
       leaveMeeting(client, data);
     });
   });
+  client.on("joinConversation", (data) => {
+    joinConversation(client, data.id, data.conversationId, data.user);
+  });
 
   // chat event
-  client.on("sendMessage", (data) => {
-    sendMessage(data.msg, data.user, data.meetId, data.time);
+  client.on("sent-message", (conversationId) => {
+    console.log("message sent");
+    io.sockets.in(conversationId).emit("receive-message");
   });
-});
-
-// Peer server events
-peerServer.on("connection", () => {
-  console.log("Connected to peer server");
 });
 
 // ===================== Production setup ===================

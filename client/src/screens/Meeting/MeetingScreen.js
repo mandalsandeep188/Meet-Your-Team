@@ -27,8 +27,16 @@ export default function MeetingScreen() {
     streamState ? streamState.audioStatus : "mic_off"
   );
   const [loader, setLoader] = useState(true);
+
+  //storing video stream with users
+  // with data structure
+  // stream = {
+  //   userId : [videoSource,userDetails]
+  // }
   const streams = useRef({});
   const [videoSrc, setVideoSrc] = useState({});
+
+  // to store state of meeting from server
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
   const [sideBar, setSideBar] = useState("close");
@@ -100,9 +108,9 @@ export default function MeetingScreen() {
       });
 
       // geting state of meeting joined
-      socket.on("joined-meeting", (meetingUsers, meetingChats) => {
+      socket.on("joined-meeting", (meetingUsers) => {
         setMeetingUsers(meetingUsers);
-        setMeetingChats(meetingChats);
+        receiveChats();
       });
 
       // user disconnected
@@ -247,7 +255,22 @@ export default function MeetingScreen() {
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
 
-  console.log(Object.entries(videoSrc));
+  const receiveChats = () => {
+    fetch("/receiveMessage", {
+      method: "post",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        conversationId: meetId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMeetingChats(data.chats);
+      });
+  };
 
   return (
     <>

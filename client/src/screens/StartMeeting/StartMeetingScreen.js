@@ -4,7 +4,7 @@ import "./StartMeeting.css";
 import { Link, useHistory } from "react-router-dom";
 import InputField from "../../components/InputField";
 import Loader from "../../components/Loader";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
 import config from "../../config/keys";
@@ -12,11 +12,11 @@ import config from "../../config/keys";
 export const socket = io(config.URL);
 
 export default function StartMeetingScreen() {
-  const user = useSelector((state) => state.userReducer);
   const [stream, setStream] = useState(null);
   const [videoStatus, setVideoStatus] = useState("videocam");
   const [audioStatus, setAudioStatus] = useState("mic");
   const [joinId, setJoinId] = useState("");
+  const [name, setName] = useState("");
   const [loader, setLoader] = useState(true);
   const preview = useRef();
   const history = useHistory();
@@ -62,13 +62,6 @@ export default function StartMeetingScreen() {
     });
   };
 
-  // cleanup think
-  useEffect(() => {
-    return () => {
-      // if (!streamState) history.go(0);
-    };
-  }, []);
-
   const toggleVideo = () => {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
@@ -95,7 +88,7 @@ export default function StartMeetingScreen() {
       audioStatus,
     };
     dispatch(setStreamState(streamState));
-    socket.emit("newMeeting");
+    socket.emit("newMeeting", name);
     socket.on("newMeeting", (data) => {
       history.push(`/meet/${data.meetId}`);
       M.toast({
@@ -107,17 +100,36 @@ export default function StartMeetingScreen() {
   const joinMeeting = () => {
     let meetId = joinId;
     meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
-    if (meetId.length == 8) {
+    if (meetId.length === 8) {
       const streamState = {
         videoStatus,
         audioStatus,
       };
       dispatch(setStreamState(streamState));
       console.log(meetId);
-      socket.emit("joinMeeting", { user, meetId });
       history.push(`/meet/${meetId}`);
     } else {
       M.toast({ html: "Invalid meet link", classes: "#c62828 red darken-3" });
+    }
+  };
+
+  const newConversation = () => {
+    socket.emit("newConversation", name);
+    socket.on("newConversation", (data) => {
+      history.push(`/conversation/${data.conversationId}`);
+    });
+  };
+
+  const joinConversation = () => {
+    let conversationId = joinId;
+    conversationId = conversationId.slice(conversationId.lastIndexOf("/") + 1);
+    if (conversationId.length == 8) {
+      history.push(`/conversation/${conversationId}`);
+    } else {
+      M.toast({
+        html: "Invalid conversation link",
+        classes: "#c62828 red darken-3",
+      });
     }
   };
 
@@ -157,32 +169,56 @@ export default function StartMeetingScreen() {
               <div className="col s12">
                 <ul className="tabs">
                   <li className="tab col s6">
-                    <Link className="active" to="#newMeet">
-                      New Meeting
+                    <Link className="active" to="#new">
+                      New
                     </Link>
                   </li>
                   <li className="tab col s6">
-                    <Link className="" to="#joinMeet">
-                      Join Meeting
+                    <Link className="" to="#join">
+                      Join
                     </Link>
                   </li>
                 </ul>
-                <div id="newMeet" className="col s12 meet-option">
-                  <h5>Host a new meeting</h5>
-                  <button className="btn" onClick={newMeeting}>
-                    Start New Meeting
-                  </button>
+                <div id="new" className="col s12 meet-option">
+                  <InputField
+                    type="text"
+                    label="Conversation/Meet Name"
+                    changer={setName}
+                  />
+                  <div className="col s12">
+                    <button
+                      className="btn"
+                      onClick={newMeeting}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Start New Meeting
+                    </button>
+                    <button className="btn" onClick={newConversation}>
+                      Start New Conversation
+                    </button>
+                  </div>
                 </div>
-                <div id="joinMeet" className="col s12 meet-option">
-                  <h5>Join a meeting</h5>
+                <div id="join" className="col s12 meet-option">
                   <InputField
                     type="text"
                     label="Meeting Link"
                     changer={setJoinId}
                   />
-                  <button className="btn" onClick={joinMeeting}>
-                    Join Meeting
-                  </button>
+                  <div>
+                    <button className="btn" onClick={joinMeeting}>
+                      Join Meeting
+                    </button>
+                  </div>
+                  <InputField
+                    type="text"
+                    label="Conversation Link"
+                    changer={setJoinId}
+                  />
+                  <div>
+                    <button className="btn" onClick={joinConversation}>
+                      Join Conversation
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

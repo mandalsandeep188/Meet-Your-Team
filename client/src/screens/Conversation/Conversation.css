@@ -1,0 +1,52 @@
+.conversation {
+  background: #d3cce3; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #ffffff,
+    #c0f2fa
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ffffff,
+    #c0f2fa
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+.conversation .chats {
+  height: 81vh;
+  margin-bottom: 2px !important;
+}
+
+.send input {
+  background-color: white;
+}
+
+.send button i {
+  font-size: 35px !important;
+}
+
+.choose {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.choose button {
+  margin: 10px 0;
+}
+
+.members {
+  overflow-y: auto;
+  height: 83vh;
+}
+
+.modal .members {
+  height: auto;
+}
+
+@media only screen and (max-width: 600px) {
+  .conversation .chats {
+    height: 76vh;
+  }
+}

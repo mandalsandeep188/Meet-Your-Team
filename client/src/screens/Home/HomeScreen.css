@@ -30,6 +30,10 @@
   left: 4%;
 }
 
+a.green {
+  margin-left: 10px !important;
+}
+
 @media screen and (max-width: 992px) {
   .welcome {
     margin-top: 30px;
@@ -50,5 +54,17 @@
   }
   .welcome button {
     text-align: center;
+  }
+}
+
+h6.show {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@media screen and (max-width: 400px) {
+  a.green {
+    margin-left: 2px !important;
   }
 }
