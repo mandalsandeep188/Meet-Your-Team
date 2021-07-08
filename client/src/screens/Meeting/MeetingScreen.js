@@ -3,11 +3,13 @@ import Peer from "peerjs";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import M from "materialize-css";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
+import Modal from "../../components/Modal";
 import Video from "../../components/Video";
 import Loader from "../../components/Loader";
 import config from "../../config/keys";
@@ -16,8 +18,8 @@ export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
   const user = useRef(JSON.parse(localStorage.getItem("user")));
   const { meetId } = useParams();
-  const [stream, setStream] = useState(null);
-  const [sendingStream, setSendingStream] = useState([]);
+  const [myStream, setMyStream] = useState(null);
+  const [sendingStream, setSendingStream] = useState({});
   const [peer, setPeer] = useState();
   const history = useHistory();
   const [videoStatus, setVideoStatus] = useState(
@@ -26,10 +28,14 @@ export default function MeetingScreen() {
   const [audioStatus, setAudioStatus] = useState(
     streamState ? streamState.audioStatus : "mic_off"
   );
+  const myStreamStatus = useRef({
+    video: videoStatus === "videocam",
+    audio: audioStatus === "mic",
+  });
   const [loader, setLoader] = useState(true);
 
   //storing video stream with users
-  // with data structure
+  // with following data structure
   // stream = {
   //   userId : [videoSource,userDetails]
   // }
@@ -124,6 +130,10 @@ export default function MeetingScreen() {
             setVideoSrc(videoStreams);
             streams.current = videoStreams;
           }
+          if (sendingStream[userId]) {
+            let { [userId]: _, ...streams } = sendingStream;
+            setSendingStream(streams);
+          }
           M.toast({ html: `${user.name} left the meeting` });
         }
       });
@@ -140,7 +150,7 @@ export default function MeetingScreen() {
       .then((stream) => {
         stream.getAudioTracks()[0].enabled = audioStatus === "mic";
         stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
-        setStream(stream);
+        setMyStream(stream);
         addVideoStream(stream, "myStream", user.current);
       });
   };
@@ -153,10 +163,11 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
-        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
-        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
+        console.log(myStreamStatus);
+        stream.getAudioTracks()[0].enabled = myStreamStatus.current.audio;
+        stream.getVideoTracks()[0].enabled = myStreamStatus.current.video;
         const streams = sendingStream;
-        streams.push(stream);
+        streams[userId] = stream;
         setSendingStream(streams);
         console.log("calling...", userId);
         const call = peer.call(userId, stream, {
@@ -181,11 +192,9 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
-        stream.getAudioTracks()[0].enabled = audioStatus === "mic";
-        stream.getVideoTracks()[0].enabled = videoStatus === "videocam";
-        const streams = sendingStream;
-        streams.push(stream);
-        setSendingStream(streams);
+        console.log(myStreamStatus);
+        stream.getAudioTracks()[0].enabled = myStreamStatus.current.audio;
+        stream.getVideoTracks()[0].enabled = myStreamStatus.current.video;
         console.log("Answering call...");
         call.answer(stream);
         let id;
@@ -199,6 +208,9 @@ export default function MeetingScreen() {
               call.metadata.user
             );
           }
+          const streams = sendingStream;
+          streams[call.metadata.userId] = stream;
+          setSendingStream(streams);
         });
       });
   };
@@ -214,32 +226,48 @@ export default function MeetingScreen() {
   const toggleVideo = () => {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
-      stream.getVideoTracks()[0].enabled = false;
-      sendingStream.forEach((stream) => {
-        stream.getVideoTracks()[0].enabled = false;
-      });
+      myStream.getVideoTracks()[0].enabled = false;
+      myStreamStatus.current.video = false;
+      for (const key in sendingStream) {
+        if (Object.hasOwnProperty.call(sendingStream, key)) {
+          const stream = sendingStream[key];
+          stream.getVideoTracks()[0].enabled = false;
+        }
+      }
     } else {
       setVideoStatus("videocam");
-      stream.getVideoTracks()[0].enabled = true;
-      sendingStream.forEach((stream) => {
-        stream.getVideoTracks()[0].enabled = true;
-      });
+      myStream.getVideoTracks()[0].enabled = true;
+      myStreamStatus.current.video = true;
+      for (const key in sendingStream) {
+        if (Object.hasOwnProperty.call(sendingStream, key)) {
+          const stream = sendingStream[key];
+          stream.getVideoTracks()[0].enabled = true;
+        }
+      }
     }
   };
 
   const toggleAudio = () => {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
-      stream.getAudioTracks()[0].enabled = false;
-      sendingStream.forEach((stream) => {
-        stream.getAudioTracks()[0].enabled = false;
-      });
+      myStream.getAudioTracks()[0].enabled = false;
+      myStreamStatus.current.audio = false;
+      for (const key in sendingStream) {
+        if (Object.hasOwnProperty.call(sendingStream, key)) {
+          const stream = sendingStream[key];
+          stream.getAudioTracks()[0].enabled = false;
+        }
+      }
     } else {
       setAudioStatus("mic");
-      stream.getAudioTracks()[0].enabled = true;
-      sendingStream.forEach((stream) => {
-        stream.getAudioTracks()[0].enabled = true;
-      });
+      myStream.getAudioTracks()[0].enabled = true;
+      myStreamStatus.current.audio = true;
+      for (const key in sendingStream) {
+        if (Object.hasOwnProperty.call(sendingStream, key)) {
+          const stream = sendingStream[key];
+          stream.getAudioTracks()[0].enabled = true;
+        }
+      }
     }
   };
 
@@ -272,6 +300,10 @@ export default function MeetingScreen() {
       });
   };
 
+  const settings = {
+    dots: false,
+  };
+
   return (
     <>
       {loader && <Loader />}
@@ -283,52 +315,48 @@ export default function MeetingScreen() {
           style={{ margin: "0px", padding: "0px", position: "relative" }}
         >
           {/* Videos of users in the grid carousel */}
-          <Carousel
-            autoPlay={false}
-            dynamicHeight={true}
-            showThumbs={false}
-            showIndicators={false}
-          >
+          <Slider {...settings}>
             {/* Adjusting videos in grid */}
             {[...Array(Math.ceil(Object.entries(videoSrc).length / 2))].map(
               (e, index) => {
                 return (
-                  <div
-                    key={index}
-                    className="video-grid"
-                    style={{
-                      gridTemplateColumns: `repeat(${
-                        2 * index + 1 < Object.entries(videoSrc).length
-                          ? "2"
-                          : "1"
-                      }, 1fr)`,
-                    }}
-                  >
-                    <Video
-                      srcObject={Object.entries(videoSrc)[2 * index][1][0]}
-                      muted={
-                        Object.entries(videoSrc)[2 * index][0] === "myStream"
-                      }
-                      loader={setLoader}
-                      user={Object.entries(videoSrc)[2 * index][1][1]}
-                      fullHeight={
-                        2 * index + 1 === Object.entries(videoSrc).length
-                      }
-                    />
-                    {2 * index + 1 < Object.entries(videoSrc).length && (
+                  <div key={index}>
+                    <div
+                      className="video-grid"
+                      style={{
+                        gridTemplateColumns: `repeat(${
+                          2 * index + 1 < Object.entries(videoSrc).length
+                            ? "2"
+                            : "1"
+                        }, 1fr)`,
+                      }}
+                    >
                       <Video
-                        srcObject={
-                          Object.entries(videoSrc)[2 * index + 1][1][0]
+                        srcObject={Object.entries(videoSrc)[2 * index][1][0]}
+                        muted={
+                          Object.entries(videoSrc)[2 * index][0] === "myStream"
                         }
-                        user={Object.entries(videoSrc)[2 * index + 1][1][1]}
                         loader={setLoader}
+                        user={Object.entries(videoSrc)[2 * index][1][1]}
+                        fullHeight={
+                          2 * index + 1 === Object.entries(videoSrc).length
+                        }
                       />
-                    )}
+                      {2 * index + 1 < Object.entries(videoSrc).length && (
+                        <Video
+                          srcObject={
+                            Object.entries(videoSrc)[2 * index + 1][1][0]
+                          }
+                          user={Object.entries(videoSrc)[2 * index + 1][1][1]}
+                          loader={setLoader}
+                        />
+                      )}
+                    </div>
                   </div>
                 );
               }
             )}
-          </Carousel>
+          </Slider>
 
           {/* Video controls */}
           <div className="video-controls">
@@ -358,6 +386,23 @@ export default function MeetingScreen() {
             >
               <i className="material-icons">chat</i>
             </button>
+            <button
+              className="btn-floating btn modal-trigger"
+              data-target="info"
+            >
+              <i className="material-icons">info_outline</i>
+            </button>
+            <Modal id="info">
+              <>
+                <h5>Conversation Info</h5>
+                <h6>
+                  Meet link : {config.URL}/meet/{meetId}
+                </h6>
+                <h6>
+                  Conversation link : {config.URL}/conversation/{meetId}
+                </h6>
+              </>
+            </Modal>
           </div>
         </div>
 

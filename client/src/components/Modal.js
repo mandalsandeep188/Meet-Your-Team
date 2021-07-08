@@ -12,9 +12,7 @@ export default function Modal(props) {
     >
       <div className="modal-content">{props.children}</div>
       <div className="modal-footer">
-        <button className="modal-close waves-effect waves-green btn-flat">
-          Close
-        </button>
+        <button className="modal-close btn-flat">Close</button>
       </div>
     </div>
   );
