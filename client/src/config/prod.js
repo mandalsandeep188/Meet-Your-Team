@@ -1,4 +1,5 @@
 export default {
   PEER_PORT: 443,
-  URL: process.env.URL,
+  SERVER: "https://meetyourteam.herokuapp.com",
+  CLIENT: "https://meetyourteam.herokuapp.com",
 };

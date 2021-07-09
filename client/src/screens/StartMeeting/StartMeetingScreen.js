@@ -9,7 +9,7 @@ import { setStreamState } from "../../redux/actions/streamActions";
 import M from "materialize-css";
 import config from "../../config/keys";
 
-export const socket = io(config.URL);
+export const socket = io(config.SERVER);
 
 export default function StartMeetingScreen() {
   const [stream, setStream] = useState(null);

@@ -25,11 +25,11 @@ export default function Info({ conversation, screen }) {
           <b>Meet link : </b>
         </h6>
         <h6 className="col s9 m6">
-          {config.URL}/meet/{conversation.conversationId}
+          {config.CLIENT}/meet/{conversation.conversationId}
         </h6>
         <div className="col m2 s3">
           <CopyToClipboard
-            text={`${config.URL}/conversation/${conversation.conversationId}`}
+            text={`${config.CLIENT}/conversation/${conversation.conversationId}`}
             onCopy={() => M.toast({ html: "Copied to clipboard" })}
           >
             <button className="btn-flat gray">
@@ -41,11 +41,11 @@ export default function Info({ conversation, screen }) {
           <b>Conversation link : </b>
         </h6>
         <h6 className="col s9 m6">
-          {config.URL}/conversation/{conversation.conversationId}
+          {config.CLIENT}/conversation/{conversation.conversationId}
         </h6>
         <div className="col m2 s3">
           <CopyToClipboard
-            text={`${config.URL}/conversation/${conversation.conversationId}`}
+            text={`${config.CLIENT}/conversation/${conversation.conversationId}`}
             onCopy={() => M.toast({ html: "Copied to clipboard" })}
           >
             <button className="btn-flat gray">
