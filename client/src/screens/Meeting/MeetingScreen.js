@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "./Meeting.css";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Sidebar from "../../components/Sidebar";
-import Modal from "../../components/Modal";
+import Info from "../../components/Info";
 import Video from "../../components/Video";
 import Loader from "../../components/Loader";
 import config from "../../config/keys";
@@ -45,6 +45,7 @@ export default function MeetingScreen() {
   // to store state of meeting from server
   const [meetingUsers, setMeetingUsers] = useState([]);
   const [meetingChats, setMeetingChats] = useState([]);
+  const [conversation, setConversation] = useState();
   const [sideBar, setSideBar] = useState("close");
 
   useEffect(() => {
@@ -114,8 +115,9 @@ export default function MeetingScreen() {
       });
 
       // geting state of meeting joined
-      socket.on("joined-meeting", (meetingUsers) => {
+      socket.on("joined-meeting", (meetingUsers, conversation) => {
         setMeetingUsers(meetingUsers);
+        setConversation(conversation);
         receiveChats();
       });
 
@@ -175,7 +177,7 @@ export default function MeetingScreen() {
         });
         let id;
         call.on("stream", (userVideoStream) => {
-          if (id != userVideoStream.id) {
+          if (id !== userVideoStream.id) {
             console.log("Getting reciever stream...");
             id = userVideoStream.id;
             addVideoStream(userVideoStream, userId, user);
@@ -199,7 +201,7 @@ export default function MeetingScreen() {
         call.answer(stream);
         let id;
         call.on("stream", (userVideoStream) => {
-          if (id != userVideoStream.id) {
+          if (id !== userVideoStream.id) {
             console.log("Getting caller's stream....");
             id = userVideoStream.id;
             addVideoStream(
@@ -392,17 +394,10 @@ export default function MeetingScreen() {
             >
               <i className="material-icons">info_outline</i>
             </button>
-            <Modal id="info">
-              <>
-                <h5>Conversation Info</h5>
-                <h6>
-                  Meet link : {config.URL}/meet/{meetId}
-                </h6>
-                <h6>
-                  Conversation link : {config.URL}/conversation/{meetId}
-                </h6>
-              </>
-            </Modal>
+            {/* meeting info modal */}
+            {conversation && (
+              <Info conversation={conversation} screen="Meeting" />
+            )}
           </div>
         </div>
 

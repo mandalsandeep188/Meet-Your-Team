@@ -63,10 +63,6 @@
   text-align: center;
 }
 
-.carousel {
-  height: 100vh !important;
-}
-
 @keyframes slide {
   0% {
     transform: translateX(50px);
@@ -137,7 +133,7 @@
   height: 77vh;
   overflow-y: auto;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   scroll-behavior: unset;
 }
 
@@ -166,6 +162,19 @@
   color: white;
 }
 
+#info .row {
+  margin-bottom: 0 !important;
+}
+
+#info {
+  word-wrap: break-word;
+}
+
+#info .logo h5 {
+  padding-top: 20px;
+  color: black;
+}
+
 @media screen and (max-width: 992px) {
   .meet-screen {
     background-color: white;
@@ -176,6 +185,9 @@
   }
   .video-grid {
     grid-template-columns: repeat(1, 1fr) !important;
+  }
+  .video-controls button {
+    margin: 0 5px !important;
   }
   .user {
     left: 0;
@@ -190,5 +202,9 @@
   .slick-prev,
   .slick-next {
     top: 47% !important;
+  }
+  #info .logo h5 {
+    font-size: 18px;
+    padding-top: 10px;
   }
 }

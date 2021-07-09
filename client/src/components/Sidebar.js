@@ -44,11 +44,15 @@ export default function Sidebar(props) {
         }),
       })
         .then((res) => res.json())
-        .then(() => {
+        .then((data) => {
+          data.message.sender = user.current;
+          props.receive([...props.meetingChats, data.message]);
           socket.emit("sent-message", props.meetId);
-          setMsg("");
-          send.current.focus();
+          let objDiv = document.getElementsByClassName("chats")[0];
+          if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
         });
+      setMsg("");
+      send.current.focus();
     }
   };
 

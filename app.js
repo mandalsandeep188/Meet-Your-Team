@@ -79,7 +79,7 @@ io.on("connection", (client) => {
   // chat event
   client.on("sent-message", (conversationId) => {
     console.log("message sent");
-    io.sockets.in(conversationId).emit("receive-message");
+    client.broadcast.to(conversationId).emit("receive-message");
   });
 });
 

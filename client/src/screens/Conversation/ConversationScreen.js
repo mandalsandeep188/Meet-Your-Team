@@ -4,6 +4,7 @@ import { socket } from "../StartMeeting/StartMeetingScreen";
 import Loader from "../../components/Loader";
 import Chats from "../../components/Chats";
 import Modal from "../../components/Modal";
+import Info from "../../components/Info";
 import M from "materialize-css";
 import "./Conversation.css";
 
@@ -12,6 +13,7 @@ export default function ConversationScreen() {
   const send = useRef();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConservation] = useState(null);
+  const [loader, setLoader] = useState(true);
   const [msg, setMsg] = useState("");
   const { id } = useParams();
   const conversationId = useRef(id);
@@ -92,6 +94,7 @@ export default function ConversationScreen() {
 
   useEffect(() => {
     if (selectedConversation) {
+      setLoader(true);
       conversationId.current = selectedConversation.conversationId;
       joinConversation();
       receiveChats();
@@ -114,11 +117,15 @@ export default function ConversationScreen() {
         }),
       })
         .then((res) => res.json())
-        .then(() => {
+        .then((data) => {
+          data.message.sender = user.current;
+          setChats([...chats, data.message]);
           socket.emit("sent-message", conversationId.current);
-          setMsg("");
-          send.current.focus();
+          let objDiv = document.getElementsByClassName("chats")[0];
+          if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
         });
+      setMsg("");
+      send.current.focus();
     }
   };
 
@@ -136,10 +143,18 @@ export default function ConversationScreen() {
       .then((res) => res.json())
       .then((data) => {
         setChats(data.chats);
+        setLoader(false);
         let objDiv = document.getElementsByClassName("chats")[0];
         if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
       });
   };
+
+  useEffect(() => {
+    if (!loader) {
+      let objDiv = document.getElementsByClassName("chats")[0];
+      if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
+    }
+  }, [loader]);
 
   return (
     <div className="conversation">
@@ -183,66 +198,88 @@ export default function ConversationScreen() {
 
       <div className="row" style={{ margin: "0", padding: "0" }}>
         {selectedConversation ? (
-          <>
-            {/* members mobile*/}
-            <div className="col s5 hide-on-med-and-up">
-              <button
-                className="btn modal-trigger"
-                data-target="members"
-                style={{ marginBottom: "5px" }}
-              >
-                See members
-              </button>
-            </div>
-            <Modal id="members" modalClass="hide-on-med-and-up">
-              <h6>Members</h6>
-              <ul className="collection members">
-                {selectedConversation.members.map((member) => {
-                  return (
-                    <li className="collection-item avatar" key={member._id}>
-                      <img
-                        className="circle"
-                        src={member.profileImage}
-                        alt={member.name}
-                      />
-                      <span className="title">{member.name}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Modal>
+          loader ? (
+            <Loader />
+          ) : (
+            <>
+              {/* members mobile*/}
+              <div className="col s12 hide-on-med-and-up join-mobile">
+                <button className="btn modal-trigger" data-target="members">
+                  See members
+                </button>
+                <Link to={`/meet/${conversationId.current}`} className="btn">
+                  Join Meeting
+                </Link>
+                <button
+                  className="btn-floating btn modal-trigger"
+                  data-target="info"
+                >
+                  <i className="material-icons">info_outline</i>
+                </button>
+              </div>
+              <Modal id="members" modalClass="hide-on-med-and-up">
+                <h6>Members</h6>
+                <ul className="collection members">
+                  {selectedConversation.members.map((member) => {
+                    return (
+                      <li className="collection-item avatar" key={member._id}>
+                        <img
+                          className="circle"
+                          src={member.profileImage}
+                          alt={member.name}
+                        />
+                        <span className="title">{member.name}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Modal>
 
-            {/* members pc */}
-            <div className="col s3 hide-on-small-and-down">
-              <h6>Members</h6>
-              <ul className="collection members">
-                {selectedConversation.members.map((member) => {
-                  return (
-                    <li className="collection-item avatar" key={member._id}>
-                      <img
-                        className="circle"
-                        src={member.profileImage}
-                        alt={member.name}
-                      />
-                      <span className="title">{member.name}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+              {/* members pc */}
+              <div className="col s3 hide-on-small-and-down">
+                <h6>Members</h6>
+                <ul className="collection members">
+                  {selectedConversation.members.map((member) => {
+                    return (
+                      <li className="collection-item avatar" key={member._id}>
+                        <img
+                          className="circle"
+                          src={member.profileImage}
+                          alt={member.name}
+                        />
+                        <span className="title">{member.name}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <Link
+                  to={`/meet/${conversationId.current}`}
+                  className="join btn"
+                >
+                  Join Meeting
+                </Link>
+                <button
+                  className="btn-floating btn modal-trigger"
+                  data-target="info"
+                >
+                  <i className="material-icons">info_outline</i>
+                </button>
+              </div>
+              <Info conversation={selectedConversation} screen="Conversation" />
 
-            {/* chats */}
-            <div className="col s12 m9">
-              <Chats
-                setMsg={setMsg}
-                sendMessage={sendMessage}
-                chats={chats}
-                user={user}
-                msg={msg}
-                send={send}
-              />
-            </div>
-          </>
+              {/* chats */}
+              <div className="col s12 m9">
+                <Chats
+                  setMsg={setMsg}
+                  sendMessage={sendMessage}
+                  chats={chats}
+                  user={user}
+                  msg={msg}
+                  send={send}
+                />
+              </div>
+            </>
+          )
         ) : (
           <>
             {conversationId.current ? (

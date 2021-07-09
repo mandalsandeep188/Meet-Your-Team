@@ -123,7 +123,7 @@ export default function StartMeetingScreen() {
   const joinConversation = () => {
     let conversationId = joinId;
     conversationId = conversationId.slice(conversationId.lastIndexOf("/") + 1);
-    if (conversationId.length == 8) {
+    if (conversationId.length === 8) {
       history.push(`/conversation/${conversationId}`);
     } else {
       M.toast({

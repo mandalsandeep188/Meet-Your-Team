@@ -49,7 +49,11 @@ const joinMeeting = (client, userId, conversationId, user) => {
           ).then(() => {
             // inform client about joined user
             console.log("updated");
-            client.emit("joined-meeting", meetingUsers[conversationId]);
+            client.emit(
+              "joined-meeting",
+              meetingUsers[conversationId],
+              conversation
+            );
             client.broadcast.to(conversationId).emit("user-connected", {
               userId,
               user,
@@ -58,7 +62,11 @@ const joinMeeting = (client, userId, conversationId, user) => {
           });
         } else {
           // inform client about joined user
-          client.emit("joined-meeting", meetingUsers[conversationId]);
+          client.emit(
+            "joined-meeting",
+            meetingUsers[conversationId],
+            conversation
+          );
           client.broadcast.to(conversationId).emit("user-connected", {
             userId,
             user,

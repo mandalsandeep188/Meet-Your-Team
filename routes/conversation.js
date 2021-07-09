@@ -37,8 +37,8 @@ router.post("/sendMessage", requireLogin, (req, res) => {
     sender: req.user._id,
     conversationId: req.body.conversationId,
   });
-  chat.save().then(() => {
-    res.json({ message: "Sent" });
+  chat.save().then((message) => {
+    res.json({ message });
   });
 });
 
