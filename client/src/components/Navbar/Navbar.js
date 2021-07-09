@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/actions/userActions";
 import "./Navbar.css";
@@ -9,6 +9,7 @@ export default function Navbar() {
   const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
 
   const logout = () => {
     dispatch(logoutUser());
@@ -41,12 +42,12 @@ export default function Navbar() {
           {!user ? (
             <>
               <li>
-                <Link to="/login" className="btn">
+                <Link to={`/login${location.search}`} className="btn">
                   Login
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="btn green">
+                <Link to={`/register${location.search}`} className="btn green">
                   Register
                 </Link>
               </li>
@@ -77,10 +78,10 @@ export default function Navbar() {
           {!user ? (
             <>
               <li>
-                <Link to="/login">Login</Link>
+                <Link to={`/login${location.search}`}>Login</Link>
               </li>
               <li>
-                <Link to="/register">Register</Link>
+                <Link to={`/register${location.search}`}>Register</Link>
               </li>
             </>
           ) : (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams, useHistory, useLocation } from "react-router-dom";
 import { socket } from "../StartMeeting/StartMeetingScreen";
 import Loader from "../../components/Loader";
 import Chats from "../../components/Chats";
@@ -19,12 +19,10 @@ export default function ConversationScreen() {
   const conversationId = useRef(id);
   const [chats, setChats] = useState([]);
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     M.AutoInit();
-    return () => {
-      history.go(0);
-    };
   }, []);
 
   useEffect(() => {
@@ -52,7 +50,7 @@ export default function ConversationScreen() {
       .then((data) => {
         if (data.error) {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
-          history.replace("/login");
+          history.replace(`/login?context=${location.pathname}`);
         } else {
           setConversations(data.conversations);
           // join conversation

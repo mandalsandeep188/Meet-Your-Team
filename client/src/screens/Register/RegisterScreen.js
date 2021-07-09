@@ -5,7 +5,7 @@ import Loader from "../../components/Loader";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import firebase from "../../utils/firebase";
 import "../Login/Auth.css";
 import "firebase/storage";
@@ -26,6 +26,7 @@ export default function RegisterScreen() {
   const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     if (profileImage) {
@@ -60,7 +61,11 @@ export default function RegisterScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
-          history.push("/");
+          const search = location.search;
+          const from = search.length
+            ? location.search.slice(search.indexOf("/"))
+            : "/";
+          history.replace(from);
         }
         setLoader(false);
       })
@@ -172,7 +177,9 @@ export default function RegisterScreen() {
                 </button>
               </div>
               <div className="col m8 s12 link">
-                <Link to="/login">Already have an account?</Link>
+                <Link to={`/login${location.search}`}>
+                  Already have an account?
+                </Link>
               </div>
             </div>
           </form>

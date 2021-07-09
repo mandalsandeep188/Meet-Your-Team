@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import "./StartMeeting.css";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import InputField from "../../components/InputField";
 import Loader from "../../components/Loader";
 import { useDispatch } from "react-redux";
@@ -20,6 +20,7 @@ export default function StartMeetingScreen() {
   const [loader, setLoader] = useState(true);
   const preview = useRef();
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function StartMeetingScreen() {
       .then((data) => {
         if (data.error) {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
-          history.replace("/login");
+          history.replace(`/login?context=${location.pathname}`);
         } else {
           startStream();
         }
@@ -91,9 +92,6 @@ export default function StartMeetingScreen() {
     socket.emit("newMeeting", name);
     socket.on("newMeeting", (data) => {
       history.push(`/meet/${data.meetId}`);
-      M.toast({
-        html: `Meet link: ${config.URL}meet/${data.meetId}`,
-      });
     });
   };
 

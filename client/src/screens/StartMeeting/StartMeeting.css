@@ -58,13 +58,13 @@
   color: teal !important;
 }
 
-tabs .tab a:focus,
+.tabs .tab a:focus,
 .tabs .tab a:focus.active {
   background-color: rgb(244, 248, 248) !important;
 }
 
 .tabs .indicator {
-  height: 4px !important;
+  height: 2px !important;
   background-color: teal !important;
 }
 

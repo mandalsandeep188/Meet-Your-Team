@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import { useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import M from "materialize-css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -22,6 +22,7 @@ export default function MeetingScreen() {
   const [sendingStream, setSendingStream] = useState({});
   const [peer, setPeer] = useState();
   const history = useHistory();
+  const location = useLocation();
   const [videoStatus, setVideoStatus] = useState(
     streamState ? streamState.videoStatus : "videocam_off"
   );
@@ -59,7 +60,7 @@ export default function MeetingScreen() {
       .then((data) => {
         if (data.error) {
           M.toast({ html: data.error, classes: "#c62828 red darken-3" });
-          history.replace("/login");
+          history.replace(`/login?context=${location.pathname}`);
         } else if (data.meetError) {
           M.toast({ html: data.meetError, classes: "#c62828 red darken-3" });
           history.replace("/");
