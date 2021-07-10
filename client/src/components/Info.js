@@ -29,7 +29,7 @@ export default function Info({ conversation, screen }) {
         </h6>
         <div className="col m2 s3">
           <CopyToClipboard
-            text={`${config.CLIENT}/conversation/${conversation.conversationId}`}
+            text={`${config.CLIENT}/meet/${conversation.conversationId}`}
             onCopy={() => M.toast({ html: "Copied to clipboard" })}
           >
             <button className="btn-flat gray">
