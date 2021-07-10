@@ -8,6 +8,10 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 
 ![App Screenshot](./screenshots/HomeScreen.png)
 
+![App Screenshot](./screenshots/MeetScreen.png)
+
+![App Screenshot](./screenshots/ConversationScreen.png)
+
 ## Features
 
 - Multi people video call feature
@@ -15,6 +19,10 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 - Video/Audio off/on feature
 - Chat feature before meeting, during meeting and after meeting
 - Fully responsive for mobile devices
+
+## Web App flow
+
+![Web app flow](./screenshots/WebAppFlow.png)
 
 ## Deployed web app link on Heroku
 
@@ -69,7 +77,3 @@ Open new terminal in same directory and Start the client
 - [Socket IO for socket connection](https://socket.io/)
 - [JWT for user authentication](https://www.npmjs.com/package/jsonwebtoken)
 - [Bcrypt JS for hashing password](https://www.npmjs.com/package/bcryptjs)
-
-## Web App flow
-
-![Web app flow](./screenshots/WebAppFlow.png)
