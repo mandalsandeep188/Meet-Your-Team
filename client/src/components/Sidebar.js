@@ -31,7 +31,7 @@ export default function Sidebar(props) {
   // send chat message
   const sendMessage = () => {
     const message = msg.trim();
-    if (message.length != 0) {
+    if (message.length !== 0) {
       fetch(`/sendMessage`, {
         method: "post",
         headers: {

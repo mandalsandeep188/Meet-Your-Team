@@ -5,7 +5,7 @@ import Loader from "../../components/Loader";
 import { loginUser } from "../../redux/actions/userActions";
 import M from "materialize-css";
 import { useHistory } from "react-router";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Auth.css";
 
 export default function LoginScreen() {

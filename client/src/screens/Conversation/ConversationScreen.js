@@ -65,7 +65,7 @@ export default function ConversationScreen() {
               classes: "#c62828 red darken-3",
             });
             history.replace("/");
-          }
+          } else setLoader(false);
         }
       });
   };
@@ -102,7 +102,7 @@ export default function ConversationScreen() {
   // send chat message
   const sendMessage = () => {
     const message = msg.trim();
-    if (message.length != 0) {
+    if (message.length !== 0) {
       fetch(`/sendMessage`, {
         method: "post",
         headers: {
@@ -280,7 +280,7 @@ export default function ConversationScreen() {
           )
         ) : (
           <>
-            {conversationId.current ? (
+            {loader ? (
               <Loader />
             ) : (
               <h6 className="center-align col s12 show">

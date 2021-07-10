@@ -63,7 +63,7 @@ Open new terminal in same directory and Start the client
 - #### Frontend Library : [React JS](https://reactjs.org/)
 - #### State management : [Redux](https://redux.js.org/)
 
-## Libraries used
+## Major Libraries used
 
 - [Peer JS for WebRTC connection](https://peerjs.com)
 - [Socket IO for socket connection](https://socket.io/)
@@ -72,4 +72,4 @@ Open new terminal in same directory and Start the client
 
 ## Web App flow
 
-Todo
+![Web app flow](./screenshots/WebAppFlow.png)
