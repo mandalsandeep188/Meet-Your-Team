@@ -4,6 +4,14 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 
 ![Logo](./screenshots/Logo.png)
 
+## Deployed web app link on Heroku
+
+#### Click to open web app : [Meet Your Team](https://meetyourteam.herokuapp.com/)
+
+## Design document (Agile Methodology)
+
+Click to open : [Agile document](https://tinyurl.com/44yxj2z5)
+
 ## Screenshots
 
 ![App Screenshot](./screenshots/HomeScreen.png)
@@ -23,14 +31,6 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 ## Web App flow
 
 ![Web app flow](./screenshots/WebAppFlow.png)
-
-## Deployed web app link on Heroku
-
-#### Click to open web app : [Meet Your Team](https://meetyourteam.herokuapp.com/)
-
-## Design document (Agile Methodology)
-
-Click to open : [Agile document](https://tinyurl.com/44yxj2z5)
 
 ## Run Locally
 
