@@ -14,7 +14,7 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 
 ## Demo video
 
-#### Click to watch : [Agile document](https://youtu.be/P4cMJiBBcwg)
+#### Click to watch : [Demo](https://youtu.be/P4cMJiBBcwg)
 
 ## Screenshots
 
