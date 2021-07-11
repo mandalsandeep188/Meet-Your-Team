@@ -28,6 +28,10 @@ A Microsoft Teams Clone made under Microsoft Engage 2021 program.
 
 #### Click to open web app : [Meet Your Team](https://meetyourteam.herokuapp.com/)
 
+## Design document (Agile Methodology)
+
+Click to open : [Agile document](https://tinyurl.com/44yxj2z5)
+
 ## Run Locally
 
 Clone the project
@@ -77,3 +81,7 @@ Open new terminal in same directory and Start the client
 - [Socket IO for socket connection](https://socket.io/)
 - [JWT for user authentication](https://www.npmjs.com/package/jsonwebtoken)
 - [Bcrypt JS for hashing password](https://www.npmjs.com/package/bcryptjs)
+
+### Note
+
+There is an error coming in the browser console of the web app called “Invalid frame header” but it is not creating any issues app is working fine.
