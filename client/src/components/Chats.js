@@ -11,6 +11,7 @@ export default function Chats(props) {
           );
         })}
       </div>
+      {/* message box to sent text */}
       <div className="send">
         <div className="input-field">
           <input

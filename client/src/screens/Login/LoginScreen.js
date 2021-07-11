@@ -17,6 +17,7 @@ export default function LoginScreen() {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  // login user
   const login = (e) => {
     e.preventDefault();
     setLoader(true);
@@ -39,6 +40,8 @@ export default function LoginScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
+
+          // cheching from where login page is directed to go there after login
           const search = location.search;
           const from = search.length
             ? location.search.slice(search.indexOf("/"))
@@ -51,6 +54,7 @@ export default function LoginScreen() {
       });
   };
 
+  // show or hide password
   const togglePassword = () => {
     if (showPassword === "password") setShowPassword("text");
     else setShowPassword("password");

@@ -1,5 +1,7 @@
 import React from "react";
 
+// Text message component
+
 export default function Message({ message, user }) {
   return (
     <div

@@ -1,4 +1,4 @@
-// Mogodb User Schema
+// User Model
 
 const mongoose = require("mongoose");
 

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import M from "materialize-css";
 
+// Modal component wich receive it's content as props.children
+
 export default function Modal(props) {
   useEffect(() => {
     M.AutoInit();

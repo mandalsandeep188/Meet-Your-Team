@@ -3,7 +3,7 @@ const { JWT_SECRET } = require("../config/keys");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 
-// middleware for checking if user logged in or not
+// middleware for user authentication
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;

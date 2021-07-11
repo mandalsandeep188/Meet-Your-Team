@@ -1,5 +1,7 @@
 import React from "react";
 
+// Input field component
+
 export default function InputField(props) {
   return (
     <div className="input-field col s12" style={{ position: "relative" }}>

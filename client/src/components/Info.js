@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import config from "../config/keys";
 import M from "materialize-css";
 
+// Meeting/conversation info
+
 export default function Info({ conversation, screen }) {
   return (
     <Modal id="info">

@@ -8,6 +8,7 @@ export default function Sidebar(props) {
   const send = useRef();
 
   useEffect(() => {
+    // receive message socket event
     socket.on("receive-message", () => {
       fetch("/receiveMessage", {
         method: "post",
@@ -55,6 +56,8 @@ export default function Sidebar(props) {
       send.current.focus();
     }
   };
+
+  // Sidebar show participants or chats during meeting
 
   return (
     <div

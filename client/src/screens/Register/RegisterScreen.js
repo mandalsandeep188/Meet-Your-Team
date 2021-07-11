@@ -28,6 +28,7 @@ export default function RegisterScreen() {
   const history = useHistory();
   const location = useLocation();
 
+  // profile imge preview
   useEffect(() => {
     if (profileImage) {
       let reader = new FileReader();
@@ -39,6 +40,7 @@ export default function RegisterScreen() {
     }
   }, [profileImage]);
 
+  // register user
   const registerUser = () => {
     fetch("/register", {
       method: "post",
@@ -61,6 +63,7 @@ export default function RegisterScreen() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch(loginUser(data.user));
           M.toast({ html: data.message, classes: "#43a047 green darken-1" });
+          // cheching from where register page is directed to go there after register
           const search = location.search;
           const from = search.length
             ? location.search.slice(search.indexOf("/"))
@@ -72,6 +75,7 @@ export default function RegisterScreen() {
       .catch((err) => console.log(err.message));
   };
 
+  // check for profile image and upload to firebase then call registerUser
   const register = (e) => {
     e.preventDefault();
     setLoader(true);
@@ -112,10 +116,12 @@ export default function RegisterScreen() {
       });
   };
 
+  // when image uplaoded to firebase
   useEffect(() => {
     if (imageUrl) registerUser();
   }, [imageUrl]);
 
+  // show or hide password
   const togglePassword = () => {
     if (showPassword === "password") setShowPassword("text");
     else setShowPassword("password");

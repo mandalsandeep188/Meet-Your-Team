@@ -63,6 +63,7 @@ export default function StartMeetingScreen() {
     });
   };
 
+  // video controls
   const toggleVideo = () => {
     if (videoStatus === "videocam") {
       setVideoStatus("videocam_off");
@@ -72,7 +73,6 @@ export default function StartMeetingScreen() {
       setVideoStatus("videocam");
     }
   };
-
   const toggleAudio = () => {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
@@ -83,6 +83,7 @@ export default function StartMeetingScreen() {
     }
   };
 
+  // create new meeting and join directly
   const newMeeting = () => {
     const streamState = {
       videoStatus,
@@ -95,6 +96,7 @@ export default function StartMeetingScreen() {
     });
   };
 
+  // join meeting directly
   const joinMeeting = () => {
     let meetId = joinId;
     meetId = meetId.slice(meetId.lastIndexOf("/") + 1);
@@ -104,13 +106,13 @@ export default function StartMeetingScreen() {
         audioStatus,
       };
       dispatch(setStreamState(streamState));
-      console.log(meetId);
       history.push(`/meet/${meetId}`);
     } else {
       M.toast({ html: "Invalid meet link", classes: "#c62828 red darken-3" });
     }
   };
 
+  // new conversation creation
   const newConversation = () => {
     socket.emit("newConversation", name);
     socket.on("newConversation", (data) => {
@@ -118,6 +120,7 @@ export default function StartMeetingScreen() {
     });
   };
 
+  // join conversation and meeting can be joined from there
   const joinConversation = () => {
     let conversationId = joinId;
     conversationId = conversationId.slice(conversationId.lastIndexOf("/") + 1);

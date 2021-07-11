@@ -2,17 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
-// JWT_SECRET for authentication by jwt
 const { JWT_SECRET } = require("../config/keys");
+const router = express.Router();
 
 // User Model
 const User = mongoose.model("User");
 
-// Router from express
-const router = express.Router();
-
-// Register post request
 router.post("/register", (req, res) => {
   // Getting user data from request body
   const { name, email, password, profileImage } = req.body;
@@ -66,7 +61,6 @@ router.post("/register", (req, res) => {
   });
 });
 
-// Login post request
 router.post("/login", (req, res) => {
   // Getting user credentials from request body
   const { email, password } = req.body;
@@ -116,5 +110,4 @@ router.post("/checkEmail", (req, res) => {
   });
 });
 
-// Exporting router
 module.exports = router;

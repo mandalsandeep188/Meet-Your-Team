@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const router = express.Router();
 
 // Middleware to check for authentication
 const requireLogin = require("../middleware/requireLogin");
@@ -9,9 +10,6 @@ const Conversation = mongoose.model("Conversation");
 
 // Chat Model
 const Chat = mongoose.model("Chat");
-
-// Router from express
-const router = express.Router();
 
 // all conversation of a user
 router.get("/getConversations", requireLogin, (req, res) => {
@@ -31,6 +29,7 @@ router.get("/getConversation/:conversationId", requireLogin, (req, res) => {
     });
 });
 
+// store message on send
 router.post("/sendMessage", requireLogin, (req, res) => {
   const chat = new Chat({
     text: req.body.msg,
@@ -42,6 +41,7 @@ router.post("/sendMessage", requireLogin, (req, res) => {
   });
 });
 
+// receive message based on conversation Id
 router.post("/receiveMessage", requireLogin, (req, res) => {
   Chat.find()
     .where({ conversationId: req.body.conversationId })

@@ -1,3 +1,5 @@
+// user reducer for auth
+
 const initialState = null;
 
 const userReducer = (state = initialState, action) => {

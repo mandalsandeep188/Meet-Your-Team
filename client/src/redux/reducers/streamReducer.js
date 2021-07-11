@@ -1,3 +1,5 @@
+// stream state reducer
+
 const initialState = null;
 
 export default function streamReducer(state = initialState, action) {

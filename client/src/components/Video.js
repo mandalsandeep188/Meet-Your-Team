@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
 
+// Video component receiveing srcObject
+
 export default function Video(props) {
   const ref = useRef();
   useEffect(() => {

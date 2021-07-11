@@ -21,6 +21,7 @@ export default function ConversationScreen() {
   const history = useHistory();
   const location = useLocation();
 
+  // css library init
   useEffect(() => {
     M.AutoInit();
   }, []);
@@ -40,6 +41,7 @@ export default function ConversationScreen() {
     });
   }, []);
 
+  // get all joined/created conversations
   const getConversations = () => {
     fetch("/getConversations", {
       headers: {
@@ -70,6 +72,7 @@ export default function ConversationScreen() {
       });
   };
 
+  // get a particular selected conversation
   const getConversation = () => {
     fetch(`/getConversation/${conversationId.current}`, {
       headers: {
@@ -82,6 +85,7 @@ export default function ConversationScreen() {
       });
   };
 
+  // join conversation
   const joinConversation = () => {
     socket.emit("joinConversation", {
       id: user.current._id,
@@ -90,6 +94,7 @@ export default function ConversationScreen() {
     });
   };
 
+  // when a conversation is selected
   useEffect(() => {
     if (selectedConversation) {
       setLoader(true);
@@ -127,6 +132,7 @@ export default function ConversationScreen() {
     }
   };
 
+  // receive chats
   const receiveChats = () => {
     fetch("/receiveMessage", {
       method: "post",
@@ -147,6 +153,7 @@ export default function ConversationScreen() {
       });
   };
 
+  // when loader disappeared
   useEffect(() => {
     if (!loader) {
       let objDiv = document.getElementsByClassName("chats")[0];
@@ -160,6 +167,7 @@ export default function ConversationScreen() {
         className="row"
         style={{ margin: "0", padding: "0", border: "1px solid lightgray" }}
       >
+        {/* conversations to choose */}
         <h5 className="col s10 m7">
           {selectedConversation ? (
             <>
@@ -170,7 +178,6 @@ export default function ConversationScreen() {
             "Choose a conversation"
           )}
         </h5>
-        {/* conversations */}
         <div className="col s2 m5 choose">
           <button className="btn dropdown-trigger" data-target="conversations">
             <span className=" hide-on-small-and-down">Choose conversation</span>
@@ -194,6 +201,7 @@ export default function ConversationScreen() {
         </ul>
       </div>
 
+      {/* content to show when a conversation is selected */}
       <div className="row" style={{ margin: "0", padding: "0" }}>
         {selectedConversation ? (
           loader ? (
@@ -283,6 +291,7 @@ export default function ConversationScreen() {
             {loader ? (
               <Loader />
             ) : (
+              // when no conversation selected
               <h6 className="center-align col s12 show">
                 Your chats will be shown here! <br />
                 Select a conversation to start chatting

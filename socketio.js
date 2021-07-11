@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 // Conversation Model
 const Conversation = mongoose.model("Conversation");
 
+// current participants of the meeting
 const meetingUsers = {};
 
 //=========================== Meeting related ====================
@@ -38,7 +39,6 @@ const joinMeeting = (client, userId, conversationId, user) => {
 
       if (userId && user) {
         // if user already joined before just join otherwise save in database
-        console.log("join meeting", userId, user.name);
         if (conversation.members.indexOf(userId) === -1) {
           Conversation.findOneAndUpdate(
             { conversationId },
@@ -48,7 +48,6 @@ const joinMeeting = (client, userId, conversationId, user) => {
             { new: true }
           ).then(() => {
             // inform client about joined user
-            console.log("updated");
             client.emit(
               "joined-meeting",
               meetingUsers[conversationId],
@@ -124,7 +123,6 @@ const joinConversation = (client, userId, conversationId, user) => {
     } else {
       // socket joining
       client.join(conversationId);
-      console.log("join conversation", userId, user.name, conversationId);
       if (userId && user) {
         // if user already joined before just join otherwise save in database
         if (conversation.members.indexOf(userId) === -1) {

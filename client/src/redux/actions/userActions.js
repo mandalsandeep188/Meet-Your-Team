@@ -1,4 +1,4 @@
-// redux actions
+// redux auth actions
 
 export const loginUser = (user) => {
   return {

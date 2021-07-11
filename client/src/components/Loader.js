@@ -1,5 +1,7 @@
 import React from "react";
 
+// Pre loader component
+
 export default function Loader() {
   return (
     <div className="preloader-wrapper big active">

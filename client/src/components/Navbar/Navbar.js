@@ -11,6 +11,7 @@ export default function Navbar() {
   const history = useHistory();
   const location = useLocation();
 
+  // user logout
   const logout = () => {
     dispatch(logoutUser());
     localStorage.clear();
@@ -21,6 +22,7 @@ export default function Navbar() {
     history.replace("/");
   };
 
+  // css library init
   useEffect(() => {
     M.AutoInit();
   }, []);

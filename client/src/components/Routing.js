@@ -10,6 +10,8 @@ import MeetingScreen from "../screens/Meeting/MeetingScreen";
 import ConversationScreen from "../screens/Conversation/ConversationScreen";
 import { loginUser } from "../redux/actions/userActions";
 
+// Web app routing
+
 export default function Routing() {
   const dispatch = useDispatch();
   useEffect(() => {

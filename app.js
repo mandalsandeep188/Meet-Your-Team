@@ -68,7 +68,6 @@ io.on("connection", (client) => {
   client.on("joinMeeting", (data) => {
     joinMeeting(client, data.id, data.meetId, data.user);
     client.on("disconnect", () => {
-      console.log("disconnected socket");
       leaveMeeting(client, data);
     });
   });
@@ -78,7 +77,6 @@ io.on("connection", (client) => {
 
   // chat event
   client.on("sent-message", (conversationId) => {
-    console.log("message sent");
     client.broadcast.to(conversationId).emit("receive-message");
   });
 });

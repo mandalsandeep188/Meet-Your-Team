@@ -18,11 +18,17 @@ export default function MeetingScreen() {
   const streamState = useSelector((state) => state.streamReducer);
   const user = useRef(JSON.parse(localStorage.getItem("user")));
   const { meetId } = useParams();
-  const [myStream, setMyStream] = useState(null);
-  const [sendingStream, setSendingStream] = useState({});
-  const [peer, setPeer] = useState();
   const history = useHistory();
   const location = useLocation();
+
+  // all my streams that is sent to remote users to toggle video/audio off/on
+  const [myStream, setMyStream] = useState(null);
+  const [sendingStream, setSendingStream] = useState({});
+
+  // peer instance
+  const [peer, setPeer] = useState();
+
+  // stream settings
   const [videoStatus, setVideoStatus] = useState(
     streamState ? streamState.videoStatus : "videocam_off"
   );
@@ -33,7 +39,6 @@ export default function MeetingScreen() {
     video: videoStatus === "videocam",
     audio: audioStatus === "mic",
   });
-  const [loader, setLoader] = useState(true);
 
   //storing video stream with users
   // with following data structure
@@ -49,8 +54,10 @@ export default function MeetingScreen() {
   const [conversation, setConversation] = useState();
   const [sideBar, setSideBar] = useState("close");
 
+  const [loader, setLoader] = useState(true);
+
+  // Authenticate user
   useEffect(() => {
-    // Authenticate user
     fetch(`/meeting/${meetId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -75,6 +82,7 @@ export default function MeetingScreen() {
     };
   }, []);
 
+  // Envents registration
   useEffect(() => {
     // Set peer by user id
     if (!peer && user.current) {
@@ -91,12 +99,11 @@ export default function MeetingScreen() {
     if (peer) {
       // peer open event
       peer.on("open", (id) => {
-        console.log("hello", id);
         socket.emit("joinMeeting", { id, meetId, user: user.current });
       });
 
       peer.on("error", (err) => {
-        console.log(err);
+        M.toast({ html: "Some error occurred! Retry" });
         history.replace("/");
       });
 
@@ -108,7 +115,6 @@ export default function MeetingScreen() {
       // user connected
       socket.on("user-connected", (data) => {
         if (!data.error) {
-          console.log("connected user", data.userId);
           M.toast({ html: `${data.user.name} joined the meeting` });
           setMeetingUsers(data.meetingUsers);
           callUser(user.current._id, data.userId, user.current, data.user);
@@ -124,7 +130,6 @@ export default function MeetingScreen() {
 
       // user disconnected
       socket.on("user-disconnected", (userId, user, meetingUsers) => {
-        console.log("socket disconnected", user.name);
         setMeetingUsers(meetingUsers);
         if (userId) {
           // removing video of user left
@@ -166,20 +171,17 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
-        console.log(myStreamStatus);
         stream.getAudioTracks()[0].enabled = myStreamStatus.current.audio;
         stream.getVideoTracks()[0].enabled = myStreamStatus.current.video;
         const streams = sendingStream;
         streams[userId] = stream;
         setSendingStream(streams);
-        console.log("calling...", userId);
         const call = peer.call(userId, stream, {
           metadata: { userId: myId, user: me },
         });
         let id;
         call.on("stream", (userVideoStream) => {
           if (id !== userVideoStream.id) {
-            console.log("Getting reciever stream...");
             id = userVideoStream.id;
             addVideoStream(userVideoStream, userId, user);
           }
@@ -195,15 +197,12 @@ export default function MeetingScreen() {
         audio: true,
       })
       .then((stream) => {
-        console.log(myStreamStatus);
         stream.getAudioTracks()[0].enabled = myStreamStatus.current.audio;
         stream.getVideoTracks()[0].enabled = myStreamStatus.current.video;
-        console.log("Answering call...");
         call.answer(stream);
         let id;
         call.on("stream", (userVideoStream) => {
           if (id !== userVideoStream.id) {
-            console.log("Getting caller's stream....");
             id = userVideoStream.id;
             addVideoStream(
               userVideoStream,
@@ -249,7 +248,6 @@ export default function MeetingScreen() {
       }
     }
   };
-
   const toggleAudio = () => {
     if (audioStatus === "mic") {
       setAudioStatus("mic_off");
@@ -279,13 +277,13 @@ export default function MeetingScreen() {
     setSideBar(toShow);
     window.scrollTo(0, document.body.scrollHeight);
   };
-
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
     let objDiv = document.getElementsByClassName("chats")[0];
     if (objDiv) objDiv.scrollTop = objDiv.scrollHeight;
   }, [sideBar]);
 
+  // receive chats at start
   const receiveChats = () => {
     fetch("/receiveMessage", {
       method: "post",
@@ -303,10 +301,6 @@ export default function MeetingScreen() {
       });
   };
 
-  const settings = {
-    dots: false,
-  };
-
   return (
     <>
       {loader && <Loader />}
@@ -318,7 +312,7 @@ export default function MeetingScreen() {
           style={{ margin: "0px", padding: "0px", position: "relative" }}
         >
           {/* Videos of users in the grid carousel */}
-          <Slider {...settings}>
+          <Slider dots={false}>
             {/* Adjusting videos in grid */}
             {[...Array(Math.ceil(Object.entries(videoSrc).length / 2))].map(
               (e, index) => {

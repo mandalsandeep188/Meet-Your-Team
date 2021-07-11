@@ -1,3 +1,5 @@
+// make random id
+
 const makeId = (length) => {
   let text = "";
   let possible =

@@ -6,6 +6,7 @@ import Routing from "./components/Routing";
 import "firebase/analytics";
 firebase.analytics();
 
+// App gateway
 function App() {
   return (
     <>
