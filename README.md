@@ -85,7 +85,3 @@ Open new terminal in same directory and Start the client
 - [Socket IO for socket connection](https://socket.io/)
 - [JWT for user authentication](https://www.npmjs.com/package/jsonwebtoken)
 - [Bcrypt JS for hashing password](https://www.npmjs.com/package/bcryptjs)
-
-### Note
-
-There is an error coming in the browser console of the web app called “Invalid frame header” but it is not creating any issues app is working fine.
